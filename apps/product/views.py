@@ -2,10 +2,10 @@ import rest_framework.serializers
 from django.shortcuts import render
 from rest_framework import status
 from rest_framework.response import Response
-from rest_framework.viewsets import ModelViewSet
+from rest_framework.viewsets import ModelViewSet ,generics
 
 from apps.product.serializer import ProductSerializers, ProductValidateSerializer
-from apps.product.models import Product
+from apps.product.models import Product, ArchiveProduct
 
 
 # Create your views here.
@@ -27,4 +27,40 @@ class ProductViewSet(ModelViewSet):  # GET/PUT/DELETE/CREATE/POST
             status=serializer.validated_data.get('status'),
         )
 
-        return Response(data=self.serializer_class(product, many=False).data, status=status.HTTP_201_CREATED)
+        return Response(data=self.serializer_class(product, many=False).data,
+                        status=status.HTTP_201_CREATED)
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+
+        archive_product = ArchiveProduct(
+            title=instance.title,
+            category=instance.category,
+            identification_number=instance.identification_number,
+            unit_of_measurement=instance.unit_of_measurement,
+            quantity=instance.quantity,
+            price=instance.price,
+            status=instance.status
+        )
+        archive_product.save()
+        instance.delete()
+
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+    def restore(self, request, pk):
+        archive_product = ArchiveProduct.objects.get(pk=pk)
+        new_product = Product(
+            title=archive_product.title,
+            category=archive_product.category,
+            identification_number=archive_product.identification_number,
+            unit_of_measurement=archive_product.unit_of_measurement,
+            quantity=archive_product.quantity,
+            price=archive_product.price,
+            status=archive_product.status
+        )
+        new_product.save()
+        archive_product.delete()
+
+        return Response(data=ProductSerializers(new_product).data, status=status.HTTP_201_CREATED)
+
+
+
