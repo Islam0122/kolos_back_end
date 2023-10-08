@@ -16,7 +16,7 @@ class CategorySerializers(serializers.ModelSerializer):
 class ProductSerializers(serializers.ModelSerializer):
   class Meta:
         model = Product
-        fields = 'title  category_title identification_number unit_of_measurement quantity price status'.split()
+        fields = 'title  category_title identification_number unit_of_measurement quantity price status total_price'.split()
 
 class ProductValidateSerializer(serializers.Serializer):
     title = serializers.CharField(required=True, min_length=1, max_length=100)
@@ -25,6 +25,7 @@ class ProductValidateSerializer(serializers.Serializer):
     quantity = serializers.IntegerField(default=1)
     price = serializers.IntegerField()
     status = serializers.CharField(max_length=10)
+
 
 
     def validate_category_id(self, category_id):  # 10

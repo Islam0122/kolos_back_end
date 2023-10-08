@@ -25,6 +25,9 @@ class Product(models.Model):
     quantity = models.IntegerField(default=1)
     price = models.IntegerField()
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='НОРМА')
+    def total_price(self):
+        # Рассчитываем сумму между ценой и количеством
+        return self.price * self.quantity
     @property
     def category_title(self):
         try:
