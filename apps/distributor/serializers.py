@@ -12,7 +12,7 @@ class DistributorValidateSerializer(serializers.Serializer):
     inn = serializers.IntegerField()
     address = serializers.CharField()
     actual_address = serializers.CharField()
-    passport_series = serializers.IntegerField()
+    passport_series = serializers.CharField()
     passport_id = serializers.IntegerField()
     issued_by = serializers.CharField()
     issue_date = serializers.DateField()
