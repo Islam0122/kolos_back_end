@@ -1,8 +1,9 @@
-from rest_framework.generics import mixins
-from rest_framework import generics
-from rest_framework.viewsets import GenericViewSet
+from rest_framework import viewsets, status
+from rest_framework.decorators import action
+from rest_framework.response import Response
 from .models import Distributor
-from .serializers import DistributorSerializer, DistributorDetailSerializer
+from .serializers import DistributorSerializer
+
 
 
 # Create your views here.
@@ -12,12 +13,20 @@ class DistributorView(mixins.ListModelMixin,
                       mixins.UpdateModelMixin,
                       mixins.DestroyModelMixin,
                       GenericViewSet):
+
     queryset = Distributor.objects.all()
     serializer_class = DistributorSerializer
 
+    @action(detail=True, methods=['post'])
+    def archive(self, request, pk=None):
+        distributor = self.get_object()
+        distributor.is_archived = True
+        distributor.save()
+        return Response({'status': 'archived'})
 
-    def update(self, request, *args, **kwargs):
-        instance = self.get_object()
-        instance.is_archived = True
-        instance.save()
-        return super().update(request, *args, **kwargs)
+    @action(detail=True, methods=['post'])
+    def restore(self, request, pk=None):
+        distributor = self.get_object()
+        distributor.is_archived = False
+        distributor.save()
+        return Response({'status': 'restored'})
