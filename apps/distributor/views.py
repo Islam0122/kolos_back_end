@@ -16,10 +16,6 @@ class DistributorView(mixins.ListModelMixin,
     serializer_class = DistributorSerializer
 
 
-# class DistributorDetailView(generics.RetrieveUpdateAPIView):
-#     queryset = Distributor.objects.all()
-#     serializer_class = DistributorDetailSerializer
-
     def update(self, request, *args, **kwargs):
         instance = self.get_object()
         instance.is_archived = True
