@@ -11,8 +11,6 @@ REGION_CHOICES = (
     ('Чуй', 'Чуй'),
 )
 
-
-# Create your models here.
 class Distributor(models.Model):
     photo = models.ImageField(
         upload_to='media/distributor_images/',
@@ -21,14 +19,16 @@ class Distributor(models.Model):
         verbose_name='Фотография'
     )
     name = models.CharField(
-        max_length=50, 
+        max_length=50,
         blank=False,
-        null=False, 
+        null=False,
         verbose_name='ФИО',
     )
     region = models.CharField(
         choices=REGION_CHOICES,
-        max_length=150, 
+
+        max_length=150,
+
         blank=False,
         null=False,
         verbose_name='Регион'
@@ -39,15 +39,15 @@ class Distributor(models.Model):
         null=False,
         verbose_name='ИНН'
     )
-    registration_address = models.CharField(
-        max_length=150, 
+    address = models.CharField(
+        max_length=150,
         blank=False,
         null=False,
         verbose_name='Адрес по прописке'
     )
     actual_place_of_residence = models.CharField(
         max_length=255,
-        blank=False, 
+        blank=False,
         null=False,
         verbose_name='Фактическое место жительства'
     )
@@ -68,7 +68,7 @@ class Distributor(models.Model):
         blank=False,
         verbose_name='Кем выдан'
     )
-    date_of_issue = models.DateField(
+    issue_date = models.DateField(
         null=False,
         blank=False,
         verbose_name='Дата выдачи'
@@ -84,8 +84,8 @@ class Distributor(models.Model):
         verbose_name='Контактный номер один'
     )
     contact2 = models.IntegerField(
-        null=False,
-        blank=False,
+        null=True,
+        blank=True,
         verbose_name='Контактный номер два'
     )
     is_archived = models.BooleanField(
@@ -104,3 +104,4 @@ class Distributor(models.Model):
     class Meta:
         verbose_name = "Дистрибьютор"
         verbose_name_plural = "Дистрибьюторы"
+

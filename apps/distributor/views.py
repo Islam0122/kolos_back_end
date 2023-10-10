@@ -4,7 +4,16 @@ from rest_framework.response import Response
 from .models import Distributor
 from .serializers import DistributorSerializer
 
-class DistributorViewSet(viewsets.ModelViewSet):
+
+
+# Create your views here.
+class DistributorView(mixins.ListModelMixin,
+                      mixins.RetrieveModelMixin,
+                      mixins.CreateModelMixin,
+                      mixins.UpdateModelMixin,
+                      mixins.DestroyModelMixin,
+                      GenericViewSet):
+
     queryset = Distributor.objects.all()
     serializer_class = DistributorSerializer
 
