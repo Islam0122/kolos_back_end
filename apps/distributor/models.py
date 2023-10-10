@@ -1,8 +1,21 @@
 from django.db import models
 
+
+REGION_CHOICES = (
+    ('Баткен', 'Баткен'),
+    ('Джалал-Абад', 'Джалал-Абад'),
+    ('Иссык-Куль', 'Иссык-Куль'),
+    ('Нарын', 'Нарын'),
+    ('Ош', 'Ош'),
+    ('Талас', 'Талас'),
+    ('Чуй', 'Чуй'),
+)
+
+
 # Create your models here.
 class Distributor(models.Model):
     photo = models.ImageField(
+        upload_to='media/distributor_images/',
         blank=False,
         null=False,
         verbose_name='Фотография'
@@ -14,6 +27,7 @@ class Distributor(models.Model):
         verbose_name='ФИО',
     )
     region = models.CharField(
+        choices=REGION_CHOICES,
         max_length=150, 
         blank=False,
         null=False,
@@ -62,7 +76,7 @@ class Distributor(models.Model):
     validity = models.DateField(
         null=False,
         blank=False,
-        verbose_name='Срок действия' #нада сделать выбор даты
+        verbose_name='Срок действия'
     )
     contact1 = models.IntegerField(
         null=False,

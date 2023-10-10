@@ -12,4 +12,8 @@ class DistributorListSerializer(serializers.ModelSerializer):
         model = Distributor
         fields = ('id', 'name', 'region')
 
+class DistributorDetailSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Distributor
+        fields = '__all__'
 
