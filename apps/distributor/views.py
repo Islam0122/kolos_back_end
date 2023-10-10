@@ -7,11 +7,11 @@ from .serializers import DistributorSerializer
 
 # Create your views here.
 class DistributorView(mixins.ListModelMixin,
-                  mixins.RetrieveModelMixin,
-                  mixins.CreateModelMixin,
-                  mixins.UpdateModelMixin,
-                  mixins.DestroyModelMixin,
-                  GenericViewSet):
+                      mixins.RetrieveModelMixin,
+                      mixins.CreateModelMixin,
+                      mixins.UpdateModelMixin,
+                      mixins.DestroyModelMixin,
+                      GenericViewSet):
     queryset = Distributor.objects.all()
     serializer_class = DistributorSerializer
 
