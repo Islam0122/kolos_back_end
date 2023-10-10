@@ -1,5 +1,4 @@
 from django.db import models
-
 REGION_CHOICES = (
     ('Баткен', 'Баткен'),
     ('Джалал-Абад', 'Джалал-Абад'),
@@ -9,46 +8,58 @@ REGION_CHOICES = (
     ('Талас', 'Талас'),
     ('Чуй', 'Чуй'),
 )
-
 class Distributor(models.Model):
     photo = models.ImageField(
         blank=False,
         null=False,
         verbose_name='Фотография'
     )
-    full_name = models.CharField(
-        max_length=100,
+    name = models.CharField(
+        max_length=50,
+        blank=False,
+        null=False,
         verbose_name='ФИО',
     )
     region = models.CharField(
         choices=REGION_CHOICES,
-        max_length=50,
+        max_length=150,
         blank=False,
         null=False,
         verbose_name='Регион'
     )
     inn = models.IntegerField(
+        blank=False,
         unique=True,
+        null=False,
         verbose_name='ИНН'
     )
     address = models.CharField(
-        max_length=250,
+        max_length=150,
+        blank=False,
+        null=False,
         verbose_name='Адрес по прописке'
     )
-    actual_address = models.CharField(
-        max_length=250,
+    actual_place_of_residence = models.CharField(
+        max_length=255,
+        blank=False,
+        null=False,
         verbose_name='Фактическое место жительства'
     )
-    passport_series = models.CharField(
-        max_length=2,
+    passport_series = models.IntegerField(
+        blank=False,
+        null=False,
+        unique=True,
         verbose_name='Серия паспорта'
     )
     passport_id = models.IntegerField(
-        unique=True,
+        blank=False,
+        null=False,
         verbose_name='Номер паспорта'
     )
     issued_by = models.CharField(
-        max_length=50,
+        max_length=255,
+        null=False,
+        blank=False,
         verbose_name='Кем выдан'
     )
     issue_date = models.DateField(
@@ -59,7 +70,7 @@ class Distributor(models.Model):
     validity = models.DateField(
         null=False,
         blank=False,
-        verbose_name='Срок действия' #надо сделать выбор даты
+        verbose_name='Срок действия' #нада сделать выбор даты
     )
     contact1 = models.IntegerField(
         null=False,
@@ -75,6 +86,3 @@ class Distributor(models.Model):
         default=False,
         verbose_name='В архив'
     )
-
-    def __str__(self):
-        return self.full_name
