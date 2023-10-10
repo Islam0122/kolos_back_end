@@ -24,10 +24,11 @@ from django.conf.urls.static import static
 api_urlpatterns = [
     path('', include('apps.distributor.urls')),
     # path('users/', include('apps.users.urls')),
-    path('api/', include(api_urlpatterns)),
-    path('admin/', admin.site.urls),
-    path('api/v1/', include("apps.product.urls")),
+]
 
+urlpatterns = [
+    path('admin/', admin.site.urls),
+    path('api/', include(api_urlpatterns)),
 ]
 
 
