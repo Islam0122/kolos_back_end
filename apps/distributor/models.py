@@ -92,4 +92,15 @@ class Distributor(models.Model):
         default=False,
         verbose_name='В архив'
     )
+    archived_date = models.DateTimeField(
+        null=True, blank=True,
+        verbose_name="Дата архивации"
+    )
 
+
+    def __str__(self):
+        return self.name 
+    
+    class Meta:
+        verbose_name = "Дистрибьютор"
+        verbose_name_plural = "Дистрибьюторы"
