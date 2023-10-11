@@ -1,11 +1,9 @@
-import rest_framework.serializers
-from django.shortcuts import render
 from rest_framework import status
 from rest_framework.response import Response
-from rest_framework.viewsets import ModelViewSet ,generics
+from rest_framework.viewsets import ModelViewSet
 
-from apps.product.serializer import ProductSerializers, ProductValidateSerializer
 from apps.product.models import Product, ArchiveProduct
+from apps.product.serializer import ProductSerializers, ProductValidateSerializer
 
 
 # Create your views here.
@@ -29,6 +27,7 @@ class ProductViewSet(ModelViewSet):  # GET/PUT/DELETE/CREATE/POST
 
         return Response(data=self.serializer_class(product, many=False).data,
                         status=status.HTTP_201_CREATED)
+
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()
 
@@ -61,6 +60,3 @@ class ProductViewSet(ModelViewSet):  # GET/PUT/DELETE/CREATE/POST
         archive_product.delete()
 
         return Response(data=ProductSerializers(new_product).data, status=status.HTTP_201_CREATED)
-
-
-

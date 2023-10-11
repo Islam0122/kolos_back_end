@@ -20,14 +20,12 @@ from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 
-
 urlpatterns = [
     path('', include('apps.distributor.urls')),
     # path('users/', include('apps.users.urls')),
     path('admin/', admin.site.urls),
-    path('api/v1/', include("apps.product.urls")),
+    path('api/v1/product/', include("apps.product.urls")),
 
 ]
-
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
