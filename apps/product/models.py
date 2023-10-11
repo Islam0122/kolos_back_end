@@ -12,11 +12,17 @@ STATUS_CHOICES = (
 class Category(models.Model):
     title = models.CharField(
         max_length=100,
+        verbose_name='Категория'
     )
     #create_data = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return self.title
+    
+
+    class Meta:
+        verbose_name = "Категория"
+        verbose_name_plural = "Категория"
 
 
 class Product(models.Model):

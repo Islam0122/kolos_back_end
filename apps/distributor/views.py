@@ -10,7 +10,7 @@ from .serializers import DistributorSerializer, ArchivedDistributorSerializer
 # Create your views here.
 class DistributorView(viewsets.ModelViewSet):
 
-    queryset = Distributor.objects.all()
+    queryset = Distributor.objects.filter(is_archived=False)
     serializer_class = DistributorSerializer
 
     @action(detail=True, methods=['post'])
