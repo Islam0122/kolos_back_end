@@ -5,6 +5,8 @@ class DistributorSerializer(serializers.ModelSerializer):
     class Meta:
         model = Distributor
         fields = '__all__'
+
+
 class DistributorValidateSerializer(serializers.Serializer):
     photo = serializers.ImageField()
     full_name = serializers.CharField()
@@ -31,3 +33,7 @@ class DistributorDetailSerializer(serializers.ModelSerializer):
         model = Distributor
         fields = '__all__'
 
+class ArchivedDistributorSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Distributor
+        fields = '__all__'
