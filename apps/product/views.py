@@ -28,6 +28,10 @@ class ProductViewSet(ModelViewSet):  # GET/PUT/DELETE/CREATE/POST
         return Response(data=self.serializer_class(product, many=False).data,
                         status=status.HTTP_201_CREATED)
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> 96926b2519640b01f8190961ecc35c88dd3b12c5
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()
 
