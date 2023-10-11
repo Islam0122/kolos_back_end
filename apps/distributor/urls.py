@@ -4,12 +4,9 @@ from . import views
 
 
 urlpatterns = [
-    # Маршруты для DistributorView
-    path('distributor/', views.DistributorView.as_view({'get': 'list', 'post': 'create'}), name='distributor-list'),
-    path('distributor/<int:pk>/', views.DistributorView.as_view({'get': 'retrieve', 'put': 'update', 'patch': 'partial_update', 'delete': 'destroy'}), name='distributor-detail'),
-    path('distributor/<int:pk>/archive/', views.DistributorView.as_view({'post': 'archive'}), name='distributor-archive'),
-    path('distributor/<int:pk>/restore/', views.DistributorView.as_view({'post': 'restore'}), name='distributor-restore'),
-    
-    # Маршруты для ArchivedDistributorListView
+    path('', views.DistributorViewSet.as_view({'get': 'list', 'post': 'create'})),
+    path('<int:pk>/',
+         views.DistributorViewSet.as_view({'get': 'retrieve', 'put': 'update', 'delete': 'destroy'})),
+    path('<int:pk>/restore/', views.DistributorViewSet.as_view({'put': 'restore'})),
     path('archived-distributors/', views.ArchivedDistributorListView.as_view(), name='archived-distributor-list'),
 ]
