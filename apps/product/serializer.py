@@ -13,7 +13,8 @@ class CategorySerializers(serializers.ModelSerializer):
 class ProductSerializers(serializers.ModelSerializer):
     class Meta:
         model = Product
-        fields = 'title  category_title identification_number unit_of_measurement quantity price status total_price'.split()
+        fields = 'title  category_title identification_number unit_of_measurement quantity price status total_price ' \
+                 'create_data '.split()
 
 
 class ProductValidateSerializer(serializers.Serializer):

@@ -22,7 +22,7 @@ class ProductViewSet(ModelViewSet):  # GET/PUT/DELETE/CREATE/POST
             unit_of_measurement=serializer.validated_data.get('unit_of_measurement'),
             quantity=serializer.validated_data.get('quantity'),
             price=serializer.validated_data.get('price'),
-            status=serializer.validated_data.get('status'),
+            status=serializer.validated_data.get('status')
         )
 
         return Response(data=self.serializer_class(product, many=False).data,
@@ -38,7 +38,8 @@ class ProductViewSet(ModelViewSet):  # GET/PUT/DELETE/CREATE/POST
             unit_of_measurement=instance.unit_of_measurement,
             quantity=instance.quantity,
             price=instance.price,
-            status=instance.status
+            status=instance.status,
+
         )
         archive_product.save()
         instance.delete()

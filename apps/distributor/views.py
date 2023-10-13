@@ -92,7 +92,7 @@ class DistributorViewSet(ModelViewSet):  # GET/PUT/DELETE/CREATE/POST
 
 
 class ArchivedDistributorListView(ListAPIView):
-    queryset = Distributor.objects.filter(is_archived=True)
+    queryset = ArchiveDistributor.objects.all()
     serializer_class = ArchivedDistributorSerializer
 
 

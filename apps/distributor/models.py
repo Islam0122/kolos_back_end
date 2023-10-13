@@ -39,7 +39,7 @@ class Distributor(models.Model):
         null=False,
         verbose_name='ИНН'
     )
-    address = models.CharField(
+    address = models.CharField( 
         max_length=150,
         blank=False,
         null=False,
@@ -87,14 +87,6 @@ class Distributor(models.Model):
         null=True,
         blank=True,
         verbose_name='Контактный номер два'
-    )
-    is_archived = models.BooleanField(
-        default=False,
-        verbose_name='В архив'
-    )
-    archived_date = models.DateTimeField(
-        null=True, blank=True,
-        verbose_name="Дата архивации"
     )
 
 
@@ -180,14 +172,8 @@ class ArchiveDistributor(models.Model):
         blank=True,
         verbose_name='Контактный номер два'
     )
-    is_archived = models.BooleanField(
-        default=False,
-        verbose_name='В архив'
-    )
-    archived_date = models.DateTimeField(
-        null=True, blank=True,
-        verbose_name="Дата архивации"
-    )
+
+
     # actual_place_of_residence = models.CharField(
     #     max_length=255, 
     #     default='Unknown'

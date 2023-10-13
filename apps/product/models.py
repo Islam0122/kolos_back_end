@@ -1,4 +1,7 @@
+
+
 from django.db import models
+from django.utils import timezone
 
 # Create your models here.
 STATUS_CHOICES = (
@@ -55,8 +58,10 @@ class Product(models.Model):
         choices=STATUS_CHOICES, 
         default='НОРМА'
     )
-
-
+    create_data = models.DateTimeField(
+        default=timezone.now,
+        verbose_name='Дата создания'
+    )
     def total_price(self):
         # Рассчитываем сумму между ценой и количеством
         return self.price * self.quantity
