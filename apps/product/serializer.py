@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 
-from apps.product.models import Product, Category
+from apps.product.models import Product, Category ,ArchiveProduct
 
 
 class CategorySerializers(serializers.ModelSerializer):
@@ -31,3 +31,7 @@ class ProductValidateSerializer(serializers.Serializer):
         except Category.DoesNotExist:
             raise ValidationError('Category does not exists!')
         return category_id
+class ArchivedProductSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ArchiveProduct  # Replace 'A' with the correct model name
+        fields = '__all__'

@@ -62,6 +62,15 @@ class DistributorViewSet(ModelViewSet):  # GET/PUT/DELETE/CREATE/POST
         instance.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
+
+
+
+
+
+class ArchivedDistributorView(ModelViewSet):
+    queryset = ArchiveDistributor.objects.all()
+    serializer_class = ArchivedDistributorSerializer
+    lookup_field = 'pk'
     def restore(self, request, pk):
         archive_distributor = ArchiveDistributor.objects.get(pk=pk)
 
@@ -83,13 +92,4 @@ class DistributorViewSet(ModelViewSet):  # GET/PUT/DELETE/CREATE/POST
         new_distributor.save()
         archive_distributor.delete()
         return Response(data=DistributorSerializer(new_distributor).data, status=status.HTTP_201_CREATED)
-
-
-
-
-
-class ArchivedDistributorListView(ListAPIView):
-    queryset = ArchiveDistributor.objects.all()
-    serializer_class = ArchivedDistributorSerializer
-
 

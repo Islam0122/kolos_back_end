@@ -123,3 +123,4 @@ class ArchiveProduct(models.Model):
     class Meta:
         verbose_name = "Архивированный Товар"
         verbose_name_plural = "Архивированные Товары"
+

@@ -1,8 +1,9 @@
 from rest_framework import status
+from rest_framework.generics import ListAPIView
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 from apps.product.models import Product, ArchiveProduct
-from apps.product.serializer import ProductSerializers, ProductValidateSerializer
+from apps.product.serializer import ProductSerializers, ProductValidateSerializer , ArchivedProductSerializer
 from django_filters.rest_framework import DjangoFilterBackend
 from .service import ProductFilter
 
@@ -48,6 +49,10 @@ class ProductViewSet(ModelViewSet):  # GET/PUT/DELETE/CREATE/POST
 
         return Response(status=status.HTTP_204_NO_CONTENT)
 
+class ArchivedProductView(ModelViewSet):
+    queryset = ArchiveProduct.objects.all()
+    serializer_class = ArchivedProductSerializer
+    lookup_field = 'pk'
     def restore(self, request, pk):
         archive_product = ArchiveProduct.objects.get(pk=pk)
         new_product = Product(
