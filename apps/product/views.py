@@ -5,7 +5,7 @@ from rest_framework.viewsets import ModelViewSet
 from apps.product.models import Product, ArchiveProduct
 from apps.product.serializer import ProductSerializers, ProductValidateSerializer , ArchivedProductSerializer
 from django_filters.rest_framework import DjangoFilterBackend
-from .service import ProductFilter
+from core.filters import ProductFilter
 
 
 class ProductViewSet(ModelViewSet):  # GET/PUT/DELETE/CREATE/POST
