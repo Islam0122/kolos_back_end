@@ -93,13 +93,13 @@ class ArchiveProduct(models.Model):
         Category, 
         on_delete=models.CASCADE,
         verbose_name='Категория',
-    ) # Категория
+    )
     identification_number = models.AutoField(
         primary_key=True,
         verbose_name='Идентификационный номер'
     )
     unit_of_measurement = models.CharField(
-        max_length=10, 
+        max_length=10,
         default="литр",
         verbose_name='Единица измерения'
     )

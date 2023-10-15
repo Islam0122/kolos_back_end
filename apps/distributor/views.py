@@ -13,7 +13,7 @@ from .serializers import DistributorValidateSerializer, ArchivedDistributorSeria
 
 class DistributorViewSet(ModelViewSet):  # GET/PUT/DELETE/CREATE/POST
     queryset = Distributor.objects.all()
-    serializer_class =DistributorSerializer
+    serializer_class = DistributorSerializer
     lookup_field = 'pk'
 
     def create(self, request, *args, **kwargs):
