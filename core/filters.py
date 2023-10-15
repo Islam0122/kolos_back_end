@@ -6,8 +6,10 @@ class CharFilterInFilter(filters.BaseInFilter, filters.CharFilter):
 
 class ProductFilter(filters.FilterSet):
     category = CharFilterInFilter(field_name='category__title', lookup_expr='in')
+    create_data__gte = filters.DateFilter(field_name="create_data", lookup_expr="gte")
+    create_data__lte = filters.DateFilter(field_name="create_data", lookup_expr="lte")
 
     class Meta:
         model = Product
-        fields = ['category']
+        fields = ['category', 'create_data']
 
