@@ -5,7 +5,7 @@ class CharFilterInFilter(filters.BaseInFilter, filters.CharFilter):
     pass
 
 class ProductFilter(filters.FilterSet):
-    category = CharFilterInFilter(field_name='category__name', lookup_expr='in')
+    category = CharFilterInFilter(field_name='category__title', lookup_expr='in')
 
     class Meta:
         model = Product
