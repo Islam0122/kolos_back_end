@@ -19,15 +19,16 @@ from django.urls import path, include
 
 from django.conf import settings
 from django.conf.urls.static import static
-
+from apps.core.drf_yasg import urlpatterns as urls_swagger
 urlpatterns = [
     path('api/vi/distributor/', include('apps.distributor.urls')),
     path('admin/', admin.site.urls),
     path('api/v1/product/', include("apps.product.urls")),
      # users
-    path('api/v1/users/', include('apps.users.urls'))
+    path('api/v1/users/', include('apps.users.urls')),
 
-]
+] + urls_swagger
+
 
 
 

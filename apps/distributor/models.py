@@ -86,7 +86,7 @@ class Distributor(models.Model):
     contact2 = models.IntegerField(
         null=True,
         blank=True,
-        verbose_name='Контактный номер два'
+        verbose_name='Контактный номер дв а'
     )
 
 

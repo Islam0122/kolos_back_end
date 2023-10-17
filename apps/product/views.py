@@ -1,11 +1,10 @@
 from rest_framework import status
-from rest_framework.generics import ListAPIView
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 from apps.product.models import Product, ArchiveProduct
 from apps.product.serializer import ProductSerializers, ProductValidateSerializer , ArchivedProductSerializer
 from django_filters.rest_framework import DjangoFilterBackend
-from core.filters import ProductFilter
+from apps.core import ProductFilter
 
 
 class ProductViewSet(ModelViewSet):  # GET/PUT/DELETE/CREATE/POST

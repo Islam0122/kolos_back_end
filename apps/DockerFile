@@ -1,0 +1,10 @@
+FROM python:3.9
+LABEL authors="kolos"
+ENV PYTHONWRITEBYTECODE 1
+ENV PYTHONBUFFERED 1
+WORKDIR /kolos_warehouse
+
+COPY requirements.txt .
+RUN pip install -r /kolos_warehouse/requirements.txt
+
+ADD .. .
