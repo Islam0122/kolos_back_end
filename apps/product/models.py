@@ -1,5 +1,3 @@
-
-
 from django.db import models
 from django.utils import timezone
 
@@ -17,11 +15,11 @@ class Category(models.Model):
         max_length=100,
         verbose_name='Категория'
     )
-    #create_data = models.DateTimeField(auto_now_add=True)
+
+    # create_data = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return self.title
-    
 
     class Meta:
         verbose_name = "Категория"
@@ -33,39 +31,39 @@ class Product(models.Model):
         max_length=200,
         verbose_name='Наименование'
     )
-    category = models.ForeignKey(Category, 
-        on_delete=models.CASCADE,
-        verbose_name='Категория'
-    ) #Категория
+    category = models.ForeignKey(Category,
+                                 on_delete=models.CASCADE,
+                                 verbose_name='Категория'
+                                 )  # Категория
     identification_number = models.AutoField(
-        primary_key=True, 
+        primary_key=True,
         verbose_name='Идентификационный номер'
     )
     unit_of_measurement = models.CharField(
-        max_length=10, 
-        default="литр", 
+        max_length=10,
+        default="литр",
         verbose_name='Единица измерения'
     )
     quantity = models.IntegerField(
-        default=1, 
+        default=1,
         verbose_name='Количество'
     )
     price = models.IntegerField(
         verbose_name='Цена'
     )
     status = models.CharField(
-        max_length=20, 
-        choices=STATUS_CHOICES, 
+        max_length=20,
+        choices=STATUS_CHOICES,
         default='НОРМА'
     )
     create_data = models.DateTimeField(
         default=timezone.now,
         verbose_name='Дата создания'
     )
+
     def total_price(self):
         # Рассчитываем сумму между ценой и количеством
         return self.price * self.quantity
-
 
     @property
     def category_title(self):
@@ -74,10 +72,8 @@ class Product(models.Model):
         except:
             return None
 
-
     def __str__(self):
         return self.title
-    
 
     class Meta:
         verbose_name = "Товар"
@@ -90,7 +86,7 @@ class ArchiveProduct(models.Model):
         verbose_name='Наименование',
     )
     category = models.ForeignKey(
-        Category, 
+        Category,
         on_delete=models.CASCADE,
         verbose_name='Категория',
     )
@@ -111,16 +107,19 @@ class ArchiveProduct(models.Model):
         verbose_name='Цена',
     )
     status = models.CharField(
-        max_length=20, 
-        choices=STATUS_CHOICES, 
+        max_length=20,
+        choices=STATUS_CHOICES,
         default='НОРМА'
     )
 
     def __str__(self):
         return self.title
 
-
     class Meta:
         verbose_name = "Архивированный Товар"
         verbose_name_plural = "Архивированные Товары"
 
+### Проблема такая же как в Distributor
+# 1. нагромождение моделек
+# 2. ненужное заполнение бд
+# 3. и конечно же choices

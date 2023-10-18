@@ -1,6 +1,8 @@
 from django.db import models
 
+from django.utils.translation import gettext_lazy as _
 
+# Choices должны быть в отдельном модуле 'choices.py' или по крайне мере в одном классе
 REGION_CHOICES = (
     ('Баткен', 'Баткен'),
     ('Джалал-Абад', 'Джалал-Абад'),
@@ -11,12 +13,20 @@ REGION_CHOICES = (
     ('Чуй', 'Чуй'),
 )
 
+
+# Создал модель контакт для примера
+class Contact(models.Model):
+    distributor = models.ForeignKey('Distributor', related_name="contact_list", on_delete=models.SET_NULL)
+
+
 class Distributor(models.Model):
+    """В verbose_name желательно использовать from django.utils.translation import gettext_lazy, для многоязычности и
+    для масштабируемости проекта в дальнейшем """
     photo = models.ImageField(
         upload_to='media/distributor_images/',
         blank=False,
         null=False,
-        verbose_name='Фотография'
+        verbose_name=_('Фотография')
     )
     name = models.CharField(
         max_length=50,
@@ -39,7 +49,10 @@ class Distributor(models.Model):
         null=False,
         verbose_name='ИНН'
     )
-    address = models.CharField( 
+    # адрес, фактическое место жит., серия, номер паспорта
+    # и в целом все что связанно с приватными данными
+    # должно храниться в отдельной модельке и иметь связь(OneToOneField)
+    address = models.CharField(
         max_length=150,
         blank=False,
         null=False,
@@ -78,26 +91,23 @@ class Distributor(models.Model):
         blank=False,
         verbose_name='Срок действия'
     )
-    contact1 = models.IntegerField(
-        null=False,
-        blank=False,
-        verbose_name='Контактный номер один'
-    )
-    contact2 = models.IntegerField(
-        null=True,
-        blank=True,
-        verbose_name='Контактный номер дв а'
-    )
 
+    # необходимо создать отдельную модель контакта со связью ForeignKey к модели Distributor
 
     def __str__(self):
-        return self.name 
-    
+        return self.name
+
     class Meta:
         verbose_name = "Дистрибьютор"
         verbose_name_plural = "Дистрибьюторы"
 
 
+# Это пример получения списка контактов дистрибутора
+a = Distributor.objects.get()
+a.contact_list.all()
+
+
+# поля одинаковы с моделькой дистрибутор поэтому можно просто наследоваться от него
 class ArchiveDistributor(models.Model):
     photo = models.ImageField(
         upload_to='media/distributor_images/',
@@ -173,15 +183,13 @@ class ArchiveDistributor(models.Model):
         verbose_name='Контактный номер два'
     )
 
-
     # actual_place_of_residence = models.CharField(
-    #     max_length=255, 
+    #     max_length=255,
     #     default='Unknown'
     # )
 
     def __str__(self):
         return self.name
-
 
     class Meta:
         verbose_name = "Архивированный Дистрибьютор"

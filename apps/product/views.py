@@ -2,11 +2,12 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 from apps.product.models import Product, ArchiveProduct
-from apps.product.serializer import ProductSerializers, ProductValidateSerializer , ArchivedProductSerializer
+from apps.product.serializer import ProductSerializers, ProductValidateSerializer, ArchivedProductSerializer
 from django_filters.rest_framework import DjangoFilterBackend
 from apps.core import ProductFilter
 
 
+# та же самая ошибка что и в Distributor, а знание оптимизации запроса плюс
 class ProductViewSet(ModelViewSet):  # GET/PUT/DELETE/CREATE/POST
     queryset = Product.objects.all().select_related('category')
     serializer_class = ProductSerializers
@@ -48,10 +49,12 @@ class ProductViewSet(ModelViewSet):  # GET/PUT/DELETE/CREATE/POST
 
         return Response(status=status.HTTP_204_NO_CONTENT)
 
+
 class ArchivedProductView(ModelViewSet):
     queryset = ArchiveProduct.objects.all()
     serializer_class = ArchivedProductSerializer
     lookup_field = 'pk'
+
     def restore(self, request, pk):
         archive_product = ArchiveProduct.objects.get(pk=pk)
         new_product = Product(

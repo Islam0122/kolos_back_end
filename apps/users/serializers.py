@@ -1,8 +1,12 @@
 from rest_framework import serializers
 from django.contrib.auth.models import User
+
+
+# Ребята используем менеджеры и AbstractBaseUser для его переопределения(это удалить и переделать)
 class UserLoginSerializer(serializers.Serializer):
     username = serializers.CharField()
     password = serializers.CharField()
+
 
 class UserRegistrationSerializer(serializers.ModelSerializer):
     username = serializers.CharField(write_only=True)

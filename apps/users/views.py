@@ -23,18 +23,17 @@ class RegistrationUserViewSet(ModelViewSet):
 
 
 # Login User ViewSet
+# название класса с БОЛЬШОЙ БУКВЫ
 class login_userViewSet(ModelViewSet):
     serializer_class = UserLoginSerializer
+
     def post(self, request, *args, **kwargs):
         serializer = UserLoginSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         user = authenticate(**serializer.validated_data)
         if user:
             token, created = Token.objects.get_or_create(user=user)
-
-
+        # можно вместо else ничего не писать
             return Response({'token': token.key})
         else:
             return Response(status=401, data={'error': 'Invalid credentials'})
-
-

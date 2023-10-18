@@ -1,4 +1,4 @@
-from decouple import config, Csv
+import decouple
 
-env = config
-csv = Csv
+env = decouple.config
+csv = decouple.Csv

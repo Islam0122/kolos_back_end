@@ -4,16 +4,19 @@ from rest_framework.exceptions import ValidationError
 from apps.product.models import Product, Category ,ArchiveProduct
 
 
+# Те же самые ошибки что и в Distributor
 class CategorySerializers(serializers.ModelSerializer):
     class Meta:
         model = Category
         fields = '__all__'
 
 
+# метод split занимает много места и при интерпретировании много времени, так что рекомендую засунуть все это в
+# tuple(кортеж)
 class ProductSerializers(serializers.ModelSerializer):
     class Meta:
         model = Product
-        fields = 'title  category_title identification_number unit_of_measurement quantity price status total_price ' \
+        fields = 'title category_title identification_number unit_of_measurement quantity price status total_price ' \
                  'create_data '.split()
 
 
@@ -31,6 +34,11 @@ class ProductValidateSerializer(serializers.Serializer):
         except Category.DoesNotExist:
             raise ValidationError('Category does not exists!')
         return category_id
+
+
+# народ GPT это конечно, очень хорошо и радует глаз то,
+# что технологии развиваюься с такой большой скоростью,
+# но немного перебарщиваете с его использованием
 class ArchivedProductSerializer(serializers.ModelSerializer):
     class Meta:
         model = ArchiveProduct  # Replace 'A' with the correct model name
