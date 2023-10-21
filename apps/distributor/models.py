@@ -15,8 +15,8 @@ REGION_CHOICES = (
 
 
 # Создал модель контакт для примера
-class Contact(models.Model):
-    distributor = models.ForeignKey('Distributor', related_name="contact_list", on_delete=models.SET_NULL)
+# class Contact(models.Model):
+#     distributor = models.ForeignKey('Distributor', on_delete=models.CASCADE)
 
 
 class Distributor(models.Model):
@@ -103,8 +103,7 @@ class Distributor(models.Model):
 
 
 # Это пример получения списка контактов дистрибутора
-a = Distributor.objects.get()
-a.contact_list.all()
+
 
 
 # поля одинаковы с моделькой дистрибутор поэтому можно просто наследоваться от него

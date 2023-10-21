@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from apps.distributor.models import Distributor, ArchiveDistributor
+from .models import Distributor, ArchiveDistributor
 
 
 # Ребят плз, умоляю, прошу, молю используйте ChatGPT по назначению или хотя бы не палитесь

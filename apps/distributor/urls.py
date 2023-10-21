@@ -1,5 +1,5 @@
 from django.urls import path
-from distributor.api import views
+from . import views
 
 
 urlpatterns = [
