@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 
-from apps.product.models import Product, Category ,ArchiveProduct
+from product.models import Product, Category ,ArchiveProduct
 
 
 # Те же самые ошибки что и в Distributor

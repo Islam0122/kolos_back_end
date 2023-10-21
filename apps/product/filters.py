@@ -1,5 +1,5 @@
 from django_filters import rest_framework as filters
-from apps.product.models import Product
+from product.models import Product
 
 class CharFilterInFilter(filters.BaseInFilter, filters.CharFilter):
     pass

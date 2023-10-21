@@ -1,10 +1,10 @@
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
-from apps.product.models import Product, ArchiveProduct
-from apps.product.serializer import ProductSerializers, ProductValidateSerializer, ArchivedProductSerializer
+from product.models import Product, ArchiveProduct
+from product.serializer import ProductSerializers, ProductValidateSerializer, ArchivedProductSerializer
 from django_filters.rest_framework import DjangoFilterBackend
-from apps.core import ProductFilter
+from product.filters import ProductFilter
 
 
 # та же самая ошибка что и в Distributor, а знание оптимизации запроса плюс
