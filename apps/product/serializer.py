@@ -8,7 +8,7 @@ class ProductSerializers(serializers.ModelSerializer):
     class Meta:
         model = Product
         fields = ['id','title', 'category','category_title', 'identification_number', 'unit_of_measurement',
-                  'quantity', 'price', 'status', 'total_price', 'create_date']
+                  'quantity', 'price', 'status', 'total_price', 'create_date','is_archived']
 
 # # народ GPT это конечно, очень хорошо и радует глаз то,
 # # что технологии развиваюься с такой большой скоростью,

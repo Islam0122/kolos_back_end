@@ -6,11 +6,16 @@ from .serializer import ProductSerializers
 from django_filters.rest_framework import DjangoFilterBackend
 
 
-
 class ProductViewSet(ModelViewSet):  # GET/PUT/DELETE/CREATE/
-    queryset = Product.objects.all().select_related('category')
+    queryset = Product.objects.filter(is_archived = False).select_related('category')
     serializer_class = ProductSerializers
     lookup_field = 'pk'
+
+class ArchivedProductView(ModelViewSet):
+     queryset = Product.objects.filter(is_archived =True).select_related('category')
+     serializer_class = ProductSerializers
+     lookup_field = 'pk'
+
     # filter_backends = (DjangoFilterBackend,)
     # filterset_class = ProductFilter
 
