@@ -48,6 +48,10 @@ class Product(models.Model):
         default='НОРМА'
     )
     create_date = models.DateTimeField(auto_now_add=True)
+    is_archived = models.BooleanField(
+        default=False,
+        verbose_name='В АРХИВ'
+    )
     def total_price(self):
         # Рассчитываем сумму между ценой и количеством
         return self.price * self.quantity
@@ -58,6 +62,7 @@ class Product(models.Model):
             return self.category.title
         except:
             return None
+
     def __str__(self):
         return self.title
 
