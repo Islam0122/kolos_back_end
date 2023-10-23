@@ -5,7 +5,7 @@ from . import views
 urlpatterns = [
     path('', views.DistributorViewSet.as_view({'get': 'list', 'post': 'create'})),
     path('<int:pk>/',
-         views.DistributorViewSet.as_view({'get': 'retrieve', 'put': 'update', 'delete': 'destroy'})),
+         views.DistributorViewSet.as_view({'get': 'retrieve', 'put': 'update'})),
     path('archive/', views.ArchivedDistributorView.as_view({'get': 'list'})),
-    path('archive/<int:pk>/', views.ArchivedDistributorView.as_view({'get': 'retrieve', 'put': 'restore'}))
+    path('archive/<int:pk>/', views.ArchivedDistributorView.as_view({'get': 'retrieve', 'put': 'update'}))
 ]
