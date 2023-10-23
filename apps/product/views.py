@@ -1,4 +1,4 @@
-from rest_framework import status
+from rest_framework import status, permissions
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 from product.models import Product, ArchiveProduct
@@ -14,6 +14,7 @@ class ProductViewSet(ModelViewSet):  # GET/PUT/DELETE/CREATE/POST
     lookup_field = 'pk'
     filter_backends = (DjangoFilterBackend,)
     filterset_class = ProductFilter
+    permission_classes = [permissions.IsAuthenticated]
 
     def create(self, request, *args, **kwargs):
         serializer = ProductValidateSerializer(data=request.data)

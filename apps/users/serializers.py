@@ -1,26 +1,26 @@
 from rest_framework import serializers
-from django.contrib.auth.models import User
+from rest_framework.exceptions import ValidationError
+from django.core.validators import RegexValidator
+from .models import CustomUser
+
+def create_custom_validator(field_name, min_length, max_length, message):
+    return serializers.CharField(
+        min_length=min_length,
+        max_length=max_length,
+        allow_blank=False,
+        allow_null=False,
+        validators=[RegexValidator(regex='^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]*$', message=message)])
+
+class UserSerializer(serializers.Serializer):
+    username = create_custom_validator('username', 4, 8, 'Логин должен состоять только из букв и цифр.')
+    password = create_custom_validator('password', 8, 12,
+                                       'Пароль должен содержать как минимум одну букву и одну цифру.')
+
+class UserCreateSerializer(UserSerializer):
+    def validate(self, data):
+        username = data.get('username')
+        if CustomUser.objects.filter(username=username).exists():
+            raise ValidationError('Пользователь с таким именем уже существует')
+        return data
 
 
-# Ребята используем менеджеры и AbstractBaseUser для его переопределения(это удалить и переделать)
-class UserLoginSerializer(serializers.Serializer):
-    username = serializers.CharField()
-    password = serializers.CharField()
-
-
-class UserRegistrationSerializer(serializers.ModelSerializer):
-    username = serializers.CharField(write_only=True)
-    password = serializers.CharField(write_only=True)
-
-    class Meta:
-        model = User
-        fields = ['username', 'password']
-
-    def validate_username(self, value):
-        if User.objects.filter(username=value).exists():
-            raise serializers.ValidationError("This username is already taken")
-        return value
-
-    def create(self, validated_data):
-        user = User.objects.create_user(**validated_data)
-        return user

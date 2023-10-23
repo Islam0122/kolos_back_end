@@ -1,5 +1,5 @@
 from rest_framework.response import Response
-from rest_framework import status
+from rest_framework import status, permissions
 from rest_framework.viewsets import ModelViewSet
 
 from distributor import models as dis_m
@@ -11,6 +11,7 @@ class DistributorViewSet(ModelViewSet):  # GET/PUT/DELETE/CREATE/POST
     queryset = dis_m.Distributor.objects.all()
     serializer_class = ser.DistributorSerializer
     lookup_field = 'pk'
+    # permission_classes = [permissions.IsAuthenticated]
 
     def create(self, request, *args, **kwargs):
         serializer = ser.DistributorValidateSerializer(data=request.data)

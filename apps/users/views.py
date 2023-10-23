@@ -1,38 +1,64 @@
-# Import necessary modules
-from rest_framework.authtoken.models import Token
+from rest_framework import status, generics
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-from rest_framework.viewsets import ModelViewSet
-from rest_framework import status
-from django.contrib.auth import authenticate
+from rest_framework_simplejwt.tokens import RefreshToken, AccessToken
+from django.contrib.auth import authenticate, login
+from .models import CustomUser, LoginAttempt
+from .serializers import UserSerializer, UserCreateSerializer
+from rest_framework.views import APIView
+from django.utils import timezone
 
-# Import serializers (assuming you have created them)
-from users import serializers as user_ser
+MAX_LOGIN_ATTEMPTS = 4
+LOCKOUT_DURATION = timezone.timedelta(minutes=5)  # Время блокировки (24 часа)
 
+class LoginAPIView(APIView):
+    def post(self, request):
+        serializer = UserSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        user = authenticate(request, **serializer.validated_data)
+        if user is not None:
+            LoginAttempt.objects.filter(user=user).delete()
+                # Далее выполнить вход пользователя
+            token = {"access": str(AccessToken.for_user(user)),
+            "refresh": str(RefreshToken.for_user(user)),}
+            login(request, user)
+            return Response(data={"message": "Вход в систему выполнен успешно", "token": token}, status=status.HTTP_200_OK)
 
-# Registration User ViewSet
-class RegistrationUserViewSet(ModelViewSet):
-    serializer_class = user_ser.UserRegistrationSerializer
+        else:
+            try:
+                user = CustomUser.objects.get(username=serializer.validated_data['username'])
+                login_attempt, created = LoginAttempt.objects.get_or_create(user=user)
+                login_attempt.failed_attempts += 1
+                login_attempt.last_failed_attempt = timezone.now()
+                login_attempt.save()
+                if login_attempt.failed_attempts >= MAX_LOGIN_ATTEMPTS:
+                        # Заблокировать доступ на LOCKOUT_DURATION
+                    login_attempt.blocked_until = timezone.now() + LOCKOUT_DURATION
+                    login_attempt.save()
+                    return Response({'message': 'Программа временно не работает. Обратитесь к администратору!'},
+                                status=status.HTTP_401_UNAUTHORIZED)
+                else:
+                    return Response({'message': 'Не правильные данные! Попробуйте еще раз!'}, status=status.HTTP_401_UNAUTHORIZED)
+            except CustomUser.DoesNotExist:
+                return Response({"message": "Пользователь не существует!"}, status=status.HTTP_404_NOT_FOUND)
 
-    def create(self, request, *args, **kwargs):
-        serializer = user_ser.UserRegistrationSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(data=serializer.data, status=status.HTTP_201_CREATED)
-        return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+class LogoutAPIView(APIView):
+    permission_classes = [IsAuthenticated]
+    def post(self, request):
+        auth_token = request.data.get('access')
+        if auth_token and auth_token.user == request.user:
+            auth_token.delete()
+        return Response({"message": "Вы успешно вышли из системы."}, status=status.HTTP_200_OK)
 
-
-# Login User ViewSet
-# название класса с БОЛЬШОЙ БУКВЫ
-class login_userViewSet(ModelViewSet):
-    serializer_class = user_ser.UserLoginSerializer
+class RegistrationView(generics.CreateAPIView):
+    queryset = CustomUser.objects.all()
+    serializer_class = UserSerializer
 
     def post(self, request, *args, **kwargs):
-        serializer = user_ser.UserLoginSerializer(data=request.data)
+        serializer = UserCreateSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        user = authenticate(**serializer.validated_data)
-        if user:
-            token, created = Token.objects.get_or_create(user=user)
-        # можно вместо else ничего не писать
-            return Response({'token': token.key})
-        else:
-            return Response(status=401, data={'error': 'Invalid credentials'})
+        username = request.data.get('username')
+        password = request.data.get('password')
+        CustomUser.objects.create_user(username=username, password=password)
+        return Response({"message": "Пользователь успешно создан"}, status=status.HTTP_201_CREATED)
+
