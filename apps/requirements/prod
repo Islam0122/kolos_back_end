@@ -34,6 +34,7 @@ py-moneyed==3.0
 Pygments==2.16.1
 PyJWT==2.8.0
 python-decouple==3.8
+gunicorn==21.2.0
 python-dotenv==1.0.0
 pytz==2023.3.post1
 PyYAML==6.0.1
