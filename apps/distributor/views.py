@@ -13,7 +13,6 @@ class DistributorViewSet(ModelViewSet):  # GET/PUT/DELETE/CREATE/POST
     lookup_field = 'pk'
 
 
-
 class ArchivedDistributorView(ModelViewSet):
     queryset = dis_m.Distributor.objects.filter(is_archived=True)
     serializer_class = ser.DistributorSerializers
