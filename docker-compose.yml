@@ -1,5 +1,5 @@
 #Кто заполнял этот докер композ, мощно, но читать сложно минимум enter
-version: '3.9'
+version: '3.3'
 services:
 
   backend:
@@ -9,7 +9,7 @@ services:
     container_name: backend
     env_file:
       - apps/.env
-    command: sh -c "python manage.py makemigrations && python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
+    command: sh -c "python manage.py makemigrations && python manage.py migrate && python manage.py runserver"
     ports:
       - "8000:8000"
     networks:
