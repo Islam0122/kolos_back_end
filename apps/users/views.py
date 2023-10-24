@@ -1,3 +1,4 @@
+from django.core.exceptions import ObjectDoesNotExist
 from rest_framework import status, generics
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -39,7 +40,7 @@ class LoginAPIView(APIView):
                                 status=status.HTTP_401_UNAUTHORIZED)
                 else:
                     return Response({'message': 'Не правильные данные! Попробуйте еще раз!'}, status=status.HTTP_401_UNAUTHORIZED)
-            except CustomUser.DoesNotExist:
+            except ObjectDoesNotExist:
                 return Response({"message": "Пользователь не существует!"}, status=status.HTTP_404_NOT_FOUND)
 
 class LogoutAPIView(APIView):
@@ -61,4 +62,3 @@ class RegistrationView(generics.CreateAPIView):
         password = request.data.get('password')
         CustomUser.objects.create_user(username=username, password=password)
         return Response({"message": "Пользователь успешно создан"}, status=status.HTTP_201_CREATED)
-
