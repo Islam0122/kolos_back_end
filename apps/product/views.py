@@ -1,3 +1,5 @@
+from rest_framework import status, permissions
+from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 
 # from apps.core.filters import ProductFilter
@@ -7,35 +9,38 @@ from django_filters.rest_framework import DjangoFilterBackend
 
 
 class ProductViewSet(ModelViewSet):  # GET/PUT/DELETE/CREATE/
-    queryset = Product.objects.filter(is_archived = False).select_related('category')
+    queryset = Product.objects.filter(is_archived=False).select_related('category')
     serializer_class = ProductSerializers
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
     lookup_field = 'pk'
 
+
 class ArchivedProductView(ModelViewSet):
-     queryset = Product.objects.filter(is_archived =True).select_related('category')
-     serializer_class = ProductSerializers
-     lookup_field = 'pk'
+    queryset = Product.objects.filter(is_archived=True).select_related('category')
+    serializer_class = ProductSerializers
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+    lookup_field = 'pk'
 
-    # filter_backends = (DjangoFilterBackend,)
-    # filterset_class = ProductFilter
+# filter_backends = (DjangoFilterBackend,)
+# filterset_class = ProductFilter
 
-    # def destroy(self, request, *args, **kwargs):
-    #     instance = self.get_object()
-    #
-    #     archive_product = ArchiveProduct(
-    #         title=instance.title,
-    #         category=instance.category,
-    #         identification_number=instance.identification_number,
-    #         unit_of_measurement=instance.unit_of_measurement,
-    #         quantity=instance.quantity,
-    #         price=instance.price,
-    #         status=instance.status,
-    #
-    #     )
-    #     archive_product.save()
-    #     instance.delete()
-    #
-    #     return Response(status=status.HTTP_204_NO_CONTENT)
+# def destroy(self, request, *args, **kwargs):
+#     instance = self.get_object()
+#
+#     archive_product = ArchiveProduct(
+#         title=instance.title,
+#         category=instance.category,
+#         identification_number=instance.identification_number,
+#         unit_of_measurement=instance.unit_of_measurement,
+#         quantity=instance.quantity,
+#         price=instance.price,
+#         status=instance.status,
+#
+#     )
+#     archive_product.save()
+#     instance.delete()
+#
+#     return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 # class ArchivedProductView(ModelViewSet):
