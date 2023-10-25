@@ -3,6 +3,7 @@ from pathlib import Path
 
 from .env_reader import env
 
+
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Production
@@ -94,6 +95,7 @@ TIME_ZONE = 'UTC'
 
 USE_I18N = True
 
+
 USE_TZ = True
 
 STATIC_URL = '/static/'
@@ -160,6 +162,11 @@ SIMPLE_JWT = {
 }
 
 AUTH_USER_MODEL = 'users.CustomUser'
+
+PASSWORD_HASHERS = [
+    'django.contrib.auth.hashers.PBKDF2PasswordHasher',
+]
+
 
 from .cors import *
 

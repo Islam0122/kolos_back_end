@@ -1,3 +1,4 @@
+from django.core.exceptions import ObjectDoesNotExist
 from rest_framework import status, generics
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -40,9 +41,8 @@ class LoginAPIView(APIView):
                     return Response({'message': 'Программа временно не работает. Обратитесь к администратору!'},
                                     status=status.HTTP_401_UNAUTHORIZED)
                 else:
-                    return Response({'message': 'Не правильные данные! Попробуйте еще раз!'},
-                                    status=status.HTTP_401_UNAUTHORIZED)
-            except CustomUser.DoesNotExist:
+                    return Response({'message': 'Не правильные данные! Попробуйте еще раз!'}, status=status.HTTP_401_UNAUTHORIZED)
+            except ObjectDoesNotExist:
                 return Response({"message": "Пользователь не существует!"}, status=status.HTTP_404_NOT_FOUND)
 
 
