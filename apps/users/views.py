@@ -8,11 +8,13 @@ from .models import CustomUser, LoginAttempt
 from .serializers import UserSerializer, UserCreateSerializer
 from rest_framework.views import APIView
 from django.utils import timezone
+from drf_yasg.utils import swagger_auto_schema
 
 MAX_LOGIN_ATTEMPTS = 4
 LOCKOUT_DURATION = timezone.timedelta(minutes=5)  # Время блокировки (24 часа)
 
 class LoginAPIView(APIView):
+    @swagger_auto_schema(request_body=UserSerializer, responses={200: 'OK', 400: 'Bad Request'}, )
     def post(self, request):
         serializer = UserSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
