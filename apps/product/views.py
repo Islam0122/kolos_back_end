@@ -11,14 +11,14 @@ from django_filters.rest_framework import DjangoFilterBackend
 class ProductViewSet(ModelViewSet):  # GET/PUT/DELETE/CREATE/
     queryset = Product.objects.filter(is_archived=False).select_related('category')
     serializer_class = ProductSerializers
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+    # permission_classes = [permissions.IsAuthenticatedOrReadOnly]
     lookup_field = 'pk'
 
 
 class ArchivedProductView(ModelViewSet):
     queryset = Product.objects.filter(is_archived=True).select_related('category')
     serializer_class = ProductSerializers
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+    # permission_classes = [permissions.IsAuthenticatedOrReadOnly]
     lookup_field = 'pk'
 
 # filter_backends = (DjangoFilterBackend,)
