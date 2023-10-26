@@ -1,13 +1,6 @@
 from django.db import models
 from django.utils import timezone
-
-# Create your models here.
-STATUS_CHOICES = (
-
-    ('НОРМА', 'НОРМА'),
-    ('брак', 'Брак'),
-    ('просроченный', 'Просроченный'),
-)
+from . import choices
 
 
 class Category(models.Model):
@@ -15,9 +8,6 @@ class Category(models.Model):
         max_length=100,
         verbose_name='Категория'
     )
-
-    # create_data = models.DateTimeField(auto_now_add=True)
-
     def __str__(self):
         return self.title
 
@@ -27,6 +17,7 @@ class Category(models.Model):
 
 
 class Product(models.Model):
+
     title = models.CharField(
         max_length=200,
         verbose_name='Наименование'
@@ -35,8 +26,8 @@ class Product(models.Model):
                                  on_delete=models.CASCADE,
                                  verbose_name='Категория'
                                  )  # Категория
-    identification_number = models.AutoField(
-        primary_key=True,
+    identification_number = models.CharField(
+        max_length=100,
         verbose_name='Идентификационный номер'
     )
     unit_of_measurement = models.CharField(
@@ -53,14 +44,14 @@ class Product(models.Model):
     )
     status = models.CharField(
         max_length=20,
-        choices=STATUS_CHOICES,
+        choices=choices.STATUS_CHOICES,
         default='НОРМА'
     )
-    create_data = models.DateTimeField(
-        default=timezone.now,
-        verbose_name='Дата создания'
+    create_date = models.DateTimeField(auto_now_add=True)
+    is_archived = models.BooleanField(
+        default=False,
+        verbose_name='В АРХИВ'
     )
-
     def total_price(self):
         # Рассчитываем сумму между ценой и количеством
         return self.price * self.quantity
@@ -80,46 +71,48 @@ class Product(models.Model):
         verbose_name_plural = "Товары"
 
 
-class ArchiveProduct(models.Model):
-    title = models.CharField(
-        max_length=200,
-        verbose_name='Наименование',
-    )
-    category = models.ForeignKey(
-        Category,
-        on_delete=models.CASCADE,
-        verbose_name='Категория',
-    )
-    identification_number = models.AutoField(
-        primary_key=True,
-        verbose_name='Идентификационный номер'
-    )
-    unit_of_measurement = models.CharField(
-        max_length=10,
-        default="литр",
-        verbose_name='Единица измерения'
-    )
-    quantity = models.IntegerField(
-        default=1,
-        verbose_name='Количество'
-    )
-    price = models.IntegerField(
-        verbose_name='Цена',
-    )
-    status = models.CharField(
-        max_length=20,
-        choices=STATUS_CHOICES,
-        default='НОРМА'
-    )
 
-    def __str__(self):
-        return self.title
 
-    class Meta:
-        verbose_name = "Архивированный Товар"
-        verbose_name_plural = "Архивированные Товары"
-
-### Проблема такая же как в Distributor
-# 1. нагромождение моделек
-# 2. ненужное заполнение бд
-# 3. и конечно же choices
+# class ArchiveProduct(models.Model):
+#     title = models.CharField(
+#         max_length=200,
+#         verbose_name='Наименование',
+#     )
+#     category = models.ForeignKey(
+#         Category,
+#         on_delete=models.CASCADE,
+#         verbose_name='Категория',
+#     )
+#     identification_number = models.AutoField(
+#         primary_key=True,
+#         verbose_name='Идентификационный номер'
+#     )
+#     unit_of_measurement = models.CharField(
+#         max_length=10,
+#         default="литр",
+#         verbose_name='Единица измерения'
+#     )
+#     quantity = models.IntegerField(
+#         default=1,
+#         verbose_name='Количество'
+#     )
+#     price = models.IntegerField(
+#         verbose_name='Цена',
+#     )
+#     status = models.CharField(
+#         max_length=20,
+#         choices=choices.STATUS_CHOICES,
+#         default='НОРМА'
+#     )
+#
+#     def __str__(self):
+#         return self.title
+#
+#     class Meta:
+#         verbose_name = "Архивированный Товар"
+#         verbose_name_plural = "Архивированные Товары"
+#
+# ### Проблема такая же как в Distributor
+# # 1. нагромождение моделек
+# # 2. ненужное заполнение бд
+# # 3. и конечно же choices

@@ -13,6 +13,7 @@ from drf_yasg.utils import swagger_auto_schema
 MAX_LOGIN_ATTEMPTS = 4
 LOCKOUT_DURATION = timezone.timedelta(minutes=5)  # Время блокировки (24 часа)
 
+
 class LoginAPIView(APIView):
     @swagger_auto_schema(request_body=UserSerializer, responses={200: 'OK', 400: 'Bad Request'}, )
     def post(self, request):
@@ -21,11 +22,12 @@ class LoginAPIView(APIView):
         user = authenticate(request, **serializer.validated_data)
         if user is not None:
             LoginAttempt.objects.filter(user=user).delete()
-                # Далее выполнить вход пользователя
+            # Далее выполнить вход пользователя
             token = {"access": str(AccessToken.for_user(user)),
-            "refresh": str(RefreshToken.for_user(user)),}
+                     "refresh": str(RefreshToken.for_user(user)), }
             login(request, user)
-            return Response(data={"message": "Вход в систему выполнен успешно", "token": token}, status=status.HTTP_200_OK)
+            return Response(data={"message": "Вход в систему выполнен успешно", "token": token},
+                            status=status.HTTP_200_OK)
 
         else:
             try:
@@ -35,23 +37,26 @@ class LoginAPIView(APIView):
                 login_attempt.last_failed_attempt = timezone.now()
                 login_attempt.save()
                 if login_attempt.failed_attempts >= MAX_LOGIN_ATTEMPTS:
-                        # Заблокировать доступ на LOCKOUT_DURATION
+                    # Заблокировать доступ на LOCKOUT_DURATION
                     login_attempt.blocked_until = timezone.now() + LOCKOUT_DURATION
                     login_attempt.save()
                     return Response({'message': 'Программа временно не работает. Обратитесь к администратору!'},
-                                status=status.HTTP_401_UNAUTHORIZED)
+                                    status=status.HTTP_401_UNAUTHORIZED)
                 else:
                     return Response({'message': 'Не правильные данные! Попробуйте еще раз!'}, status=status.HTTP_401_UNAUTHORIZED)
             except ObjectDoesNotExist:
                 return Response({"message": "Пользователь не существует!"}, status=status.HTTP_404_NOT_FOUND)
 
+
 class LogoutAPIView(APIView):
     permission_classes = [IsAuthenticated]
+
     def post(self, request):
         auth_token = request.data.get('access')
         if auth_token and auth_token.user == request.user:
             auth_token.delete()
         return Response({"message": "Вы успешно вышли из системы."}, status=status.HTTP_200_OK)
+
 
 class RegistrationView(generics.CreateAPIView):
     queryset = CustomUser.objects.all()

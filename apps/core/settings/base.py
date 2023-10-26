@@ -15,6 +15,7 @@ THEME_PARTY_APPS = [
     'rest_framework_simplejwt',
     'debug_toolbar',
     'corsheaders',
+    'drf_yasg',
     # 'djmoney',
 ]
 
