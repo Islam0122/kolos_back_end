@@ -8,9 +8,9 @@ from .drf_yasg import urlpatterns as urls_swagger
 urlpatterns = [
                   path('api/vi/distributor/', include('distributor.urls')),
                   path('admin/', admin.site.urls),
-                  path('api/v1/product/', include("product.urls")),
+                  path('api/vi/product/', include("product.urls")),
                   # users
-                  path('api/v1/users/', include('users.urls')),
+                  path('api/vi/users/', include('users.urls')),
 
               ] + urls_swagger
 
