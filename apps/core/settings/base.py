@@ -6,7 +6,6 @@ from .env_reader import env
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# Production
 PRODUCTION = env("PRODUCTION", default=False, cast=bool)
 
 THEME_PARTY_APPS = [
@@ -16,7 +15,6 @@ THEME_PARTY_APPS = [
     'debug_toolbar',
     'corsheaders',
     'drf_yasg',
-    # 'djmoney',
 ]
 
 APPS = [
@@ -24,6 +22,7 @@ APPS = [
     'product',
     'users',
     'transaction',
+    'common',
 ]
 
 THEME = [
