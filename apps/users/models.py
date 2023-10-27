@@ -53,5 +53,5 @@ class LoginAttempt(models.Model):
     last_failed_attempt = models.DateTimeField(null=True)
     blocked_until = models.DateTimeField(null=True, blank=True, default=None)
 
-    # def __str__(self):
-    #     return self.user
+    def __str__(self):
+        return str(self.user)
