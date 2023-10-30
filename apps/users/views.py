@@ -10,6 +10,13 @@ from rest_framework.views import APIView
 from django.utils import timezone
 from drf_yasg.utils import swagger_auto_schema
 
+class TestEndpoint(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        user = request.user
+        return Response({'message': f'Добро пожаловать, {user.username}!'})
+
 MAX_LOGIN_ATTEMPTS = 4
 LOCKOUT_DURATION = timezone.timedelta(minutes=5)  # Время блокировки (24 часа)
 

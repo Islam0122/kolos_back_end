@@ -5,7 +5,6 @@ from django.conf.urls.static import static
 from .drf_yasg import urlpatterns as urls_swagger
 
 urlpatterns = [
-      path('api/v1/distributor/', include('distributor.urls')),
       path('admin/', admin.site.urls),
       path('api/v1/distributor/', include('distributor.urls')),
       path('api/v1/product/', include("product.urls")),

@@ -3,6 +3,7 @@ from pathlib import Path
 
 from .env_reader import env
 
+SECRET_KEY = env('SECRET_KEY')
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -121,14 +122,14 @@ REST_FRAMEWORK = {
 }
 
 SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(hours=5),
+    "ACCESS_TOKEN_LIFETIME": timedelta(seconds=30),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
     "ROTATE_REFRESH_TOKENS": False,
     "BLACKLIST_AFTER_ROTATION": False,
     "UPDATE_LAST_LOGIN": False,
 
     "ALGORITHM": "HS256",
-    "SIGNING_KEY": 'SECRET_KEY',
+    "SIGNING_KEY": SECRET_KEY,
     "VERIFYING_KEY": "",
     "AUDIENCE": None,
     "ISSUER": None,

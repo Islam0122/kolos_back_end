@@ -44,6 +44,10 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
 
     def __str__(self):
         return self.username
+    class Meta:
+        verbose_name = "Пользователь"
+        verbose_name_plural = "Пользователи"
+
 
 
 class LoginAttempt(models.Model):
@@ -55,3 +59,6 @@ class LoginAttempt(models.Model):
 
     def __str__(self):
         return str(self.user)
+    # class Meta:
+    #     verbose_name = "Заблокированный пользователь"
+    #     verbose_name_plural = "Заблокированные пользователи"
