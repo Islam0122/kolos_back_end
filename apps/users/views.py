@@ -1,3 +1,4 @@
+from django.core.exceptions import ObjectDoesNotExist
 from rest_framework import status, generics
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -7,12 +8,14 @@ from .models import CustomUser, LoginAttempt
 from .serializers import UserSerializer, UserCreateSerializer
 from rest_framework.views import APIView
 from django.utils import timezone
+from drf_yasg.utils import swagger_auto_schema
 
 MAX_LOGIN_ATTEMPTS = 4
 LOCKOUT_DURATION = timezone.timedelta(minutes=5)  # Время блокировки (24 часа)
 
 
 class LoginAPIView(APIView):
+    @swagger_auto_schema(request_body=UserSerializer, responses={200: 'OK', 400: 'Bad Request'}, )
     def post(self, request):
         serializer = UserSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -38,11 +41,10 @@ class LoginAPIView(APIView):
                     login_attempt.blocked_until = timezone.now() + LOCKOUT_DURATION
                     login_attempt.save()
                     return Response({'message': 'Программа временно не работает. Обратитесь к администратору!'},
-                                    status=status.HTTP_401_UNAUTHORIZED)
+                                    status=status.HTTP_500_INTERNAL_SERVER_ERROR)
                 else:
-                    return Response({'message': 'Не правильные данные! Попробуйте еще раз!'},
-                                    status=status.HTTP_401_UNAUTHORIZED)
-            except CustomUser.DoesNotExist:
+                    return Response({'message': 'Не правильные данные! Попробуйте еще раз!'}, status=status.HTTP_400_BAD_REQUEST)
+            except ObjectDoesNotExist:
                 return Response({"message": "Пользователь не существует!"}, status=status.HTTP_404_NOT_FOUND)
 
 

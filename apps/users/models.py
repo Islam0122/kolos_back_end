@@ -1,5 +1,5 @@
 from django.db import models
-from django.contrib.auth.models import AbstractUser, BaseUserManager
+from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 from django.utils import timezone
 
 
@@ -10,7 +10,7 @@ class UserManager(BaseUserManager):
         user = self.model(username=username, **extra_fields)
         user.is_active = True
         user.set_password(password)
-        user.save()
+        user.save(using=self._db)
         return user
 
     def create_superuser(self, username, password, **extra_fields):
@@ -26,7 +26,7 @@ class UserManager(BaseUserManager):
         return self.create_user(username, password, **extra_fields)
 
 
-class CustomUser(AbstractUser):
+class CustomUser(AbstractBaseUser, PermissionsMixin):
     username = models.CharField(max_length=254, unique=True)
     password = models.CharField(max_length=128, null=True)
     first_name = models.CharField(max_length=255, null=True, blank=True)
@@ -40,23 +40,27 @@ class CustomUser(AbstractUser):
     USERNAME_FIELD = 'username'
     REQUIRED_FIELDS = ['password']
 
-    groups = models.ManyToManyField('auth.Group', related_name='customuser_set')
-    user_permissions = models.ManyToManyField('auth.Permission', related_name='customuser_set')
-
     objects = UserManager()
 
     def __str__(self):
         return self.username
-    def has_module_perms(self, app_label):
-        return True
-    def has_perm(self, perm, obj=None):
-        return True
+
 
 class LoginAttempt(models.Model):
-    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    user = models.ForeignKey(CustomUser, on_delete=models.SET_NULL, null=True)
+    # user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     failed_attempts = models.IntegerField(default=0)
     last_failed_attempt = models.DateTimeField(null=True)
     blocked_until = models.DateTimeField(null=True, blank=True, default=None)
 
-    # def __str__(self):
-    #     return self.user
+    def __str__(self):
+        return str(self.user)
+
+
+class Role(models.Model):
+    name = models.CharField(max_length=64, unique=True)
+
+
+class User(models.Model):
+    username = models.CharField(max_length=64, unique=True)
+    role = models.ForeignKey(Role, on_delete=models.CASCADE)

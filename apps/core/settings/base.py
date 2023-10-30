@@ -3,9 +3,9 @@ from pathlib import Path
 
 from .env_reader import env
 
+
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# Production
 PRODUCTION = env("PRODUCTION", default=False, cast=bool)
 
 THEME_PARTY_APPS = [
@@ -15,7 +15,6 @@ THEME_PARTY_APPS = [
     'debug_toolbar',
     'corsheaders',
     'drf_yasg',
-    # 'djmoney',
 ]
 
 APPS = [
@@ -23,6 +22,7 @@ APPS = [
     'product',
     'users',
     'transaction',
+    'common',
 ]
 
 THEME = [
@@ -94,6 +94,7 @@ TIME_ZONE = 'UTC'
 
 USE_I18N = True
 
+
 USE_TZ = True
 
 STATIC_URL = '/static/'
@@ -120,7 +121,7 @@ REST_FRAMEWORK = {
 }
 
 SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=5),
+    "ACCESS_TOKEN_LIFETIME": timedelta(hours=5),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
     "ROTATE_REFRESH_TOKENS": False,
     "BLACKLIST_AFTER_ROTATION": False,
@@ -148,7 +149,7 @@ SIMPLE_JWT = {
     "JTI_CLAIM": "jti",
 
     "SLIDING_TOKEN_REFRESH_EXP_CLAIM": "refresh_exp",
-    "SLIDING_TOKEN_LIFETIME": timedelta(minutes=5),
+    "SLIDING_TOKEN_LIFETIME": timedelta(minutes=10),
     "SLIDING_TOKEN_REFRESH_LIFETIME": timedelta(days=1),
 
     "TOKEN_OBTAIN_SERIALIZER": "rest_framework_simplejwt.serializers.TokenObtainPairSerializer",
@@ -160,6 +161,11 @@ SIMPLE_JWT = {
 }
 
 AUTH_USER_MODEL = 'users.CustomUser'
+
+PASSWORD_HASHERS = [
+    'django.contrib.auth.hashers.PBKDF2PasswordHasher',
+]
+
 
 from .cors import *
 
