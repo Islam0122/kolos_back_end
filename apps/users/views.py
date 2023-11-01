@@ -10,6 +10,13 @@ from rest_framework.views import APIView
 from django.utils import timezone
 from drf_yasg.utils import swagger_auto_schema
 
+class TestEndpoint(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        user = request.user
+        return Response({'message': f'Добро пожаловать, {user.username}!'})
+
 MAX_LOGIN_ATTEMPTS = 4
 LOCKOUT_DURATION = timezone.timedelta(minutes=5)  # Время блокировки (24 часа)
 
@@ -43,7 +50,8 @@ class LoginAPIView(APIView):
                     return Response({'message': 'Программа временно не работает. Обратитесь к администратору!'},
                                     status=status.HTTP_500_INTERNAL_SERVER_ERROR)
                 else:
-                    return Response({'message': 'Не правильные данные! Попробуйте еще раз!'}, status=status.HTTP_400_BAD_REQUEST)
+                    return Response({'message': 'Не правильные данные! Попробуйте еще раз!'},
+                                    status=status.HTTP_400_BAD_REQUEST)
             except ObjectDoesNotExist:
                 return Response({"message": "Пользователь не существует!"}, status=status.HTTP_404_NOT_FOUND)
 
