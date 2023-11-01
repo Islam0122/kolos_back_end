@@ -55,3 +55,12 @@ class LoginAttempt(models.Model):
 
     def __str__(self):
         return str(self.user)
+
+
+class Role(models.Model):
+    name = models.CharField(max_length=64, unique=True)
+
+
+class User(models.Model):
+    username = models.CharField(max_length=64, unique=True)
+    role = models.ForeignKey(Role, on_delete=models.CASCADE)

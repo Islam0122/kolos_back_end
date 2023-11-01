@@ -21,7 +21,6 @@ class Distributor(models.Model):
     для масштабируемости проекта в дальнейшем """
     photo = models.ImageField(
         upload_to='media/distributor_images/',
-        #6
         blank=True,
         null=True,
         verbose_name=_('Фотография')

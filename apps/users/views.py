@@ -41,9 +41,9 @@ class LoginAPIView(APIView):
                     login_attempt.blocked_until = timezone.now() + LOCKOUT_DURATION
                     login_attempt.save()
                     return Response({'message': 'Программа временно не работает. Обратитесь к администратору!'},
-                                    status=status.HTTP_401_UNAUTHORIZED)
+                                    status=status.HTTP_500_INTERNAL_SERVER_ERROR)
                 else:
-                    return Response({'message': 'Не правильные данные! Попробуйте еще раз!'}, status=status.HTTP_401_UNAUTHORIZED)
+                    return Response({'message': 'Не правильные данные! Попробуйте еще раз!'}, status=status.HTTP_400_BAD_REQUEST)
             except ObjectDoesNotExist:
                 return Response({"message": "Пользователь не существует!"}, status=status.HTTP_404_NOT_FOUND)
 
