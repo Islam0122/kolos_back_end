@@ -1,6 +1,5 @@
 from django.urls import path
-from . import views
-
+from .api import views
 
 urlpatterns = [
     path('', views.DistributorViewSet.as_view({'get': 'list', 'post': 'create'})),

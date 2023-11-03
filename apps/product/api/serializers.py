@@ -7,9 +7,11 @@ class ProductItemSerializer(serializers.ModelSerializer):
     # product = AbstractProductSerializer()
     class Meta:
         model = ProductItem
-        fields = '__all__'
+        fields = ['id', 'name', 'identification_number', 'unit', 'quantity', 'price',
+                          'sum', 'category', 'state','is_archived'
+                          ,'created_at','updated_at']
 
-    # def create(self, validated_data):
+        # def create(self, validated_data):
     #     # Extract the nested product data
     #     product_data = validated_data.pop('product')
     #     product_item = ProductItem.objects.create(**validated_data)
@@ -21,5 +23,4 @@ class ProductItemSerializer(serializers.ModelSerializer):
 # class ProductSerializer(serializers.ModelSerializer):
 #     class Meta:
 #         model = prod_mod.ProductItem
-#         fields = ['id', 'name', 'identification_number', 'unit', 'quantity', 'price',
-#                   'sum', 'category', 'state', 'created_at', 'is_archived']
+#
