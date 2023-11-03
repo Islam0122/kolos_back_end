@@ -1,8 +1,8 @@
 from rest_framework.viewsets import ModelViewSet
 
-from apps.distributor import models as dis_m
+from . import models as dis_m
 
-from apps.distributor import serializers as ser
+from . import serializers as ser
 
 
 class DistributorViewSet(ModelViewSet):  # GET/PUT/DELETE/CREATE/POST
