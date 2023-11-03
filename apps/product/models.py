@@ -13,7 +13,6 @@ class ProductItem(BaseModel):
     identification_number = models.CharField(
         _('ID'),
         max_length=100,
-        unique=True
     )
     unit = models.CharField(
         _('Ед.измерения'),
@@ -27,6 +26,8 @@ class ProductItem(BaseModel):
     )
     price = models.IntegerField(
         _('Цена'),
+        blank=True,
+        null=True
     )
     sum = models.IntegerField(
         _('Сумма'),
@@ -48,7 +49,7 @@ class ProductItem(BaseModel):
         default=False
     )
 
-    def save(self, *args, **kwargs):
+    def save(self, *args, **kwargs) -> str:
         self.sum = self.quantity * self.price
         return super().save(*args, **kwargs)
 
