@@ -19,3 +19,5 @@ class State(models.TextChoices):
     """Состояние товара"""
     NORMAL = 'Normal', 'Норма'
     INVALID = 'Invalid', 'Брак'
+
+
