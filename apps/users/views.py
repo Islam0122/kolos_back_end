@@ -1,15 +1,17 @@
-from django.core.exceptions import ObjectDoesNotExist
+from django.utils import timezone
 from rest_framework import status, generics
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken, AccessToken
 from django.contrib.auth import authenticate, login
 from .models import CustomUser, LoginAttempt
-from .serializers import UserSerializer, UserCreateSerializer
+from .serializers import UserSerializer, UserCreateSerializer, CustomUserSerializer
 from rest_framework.views import APIView
-from django.utils import timezone
 from drf_yasg.utils import swagger_auto_schema
+# from apps.core.settings.base import MAX_LOGIN_ATTEMPTS, LOCKOUT_DURATION
 
+MAX_LOGIN_ATTEMPTS = 4
+LOCKOUT_DURATION = timezone.timedelta(minutes=2)
 class TestEndpoint(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -17,53 +19,43 @@ class TestEndpoint(APIView):
         user = request.user
         return Response({'message': f'Добро пожаловать, {user.username}!'})
 
-MAX_LOGIN_ATTEMPTS = 4
-LOCKOUT_DURATION = timezone.timedelta(minutes=5)  # Время блокировки (24 часа)
-
-
 class LoginAPIView(APIView):
-    @swagger_auto_schema(request_body=UserSerializer, responses={200: 'OK', 400: 'Bad Request'}, )
+    @swagger_auto_schema(request_body=UserSerializer, responses={200: 'OK', 400: 'Bad Request'},)
     def post(self, request):
         serializer = UserSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        user = authenticate(request, **serializer.validated_data)
-        if user is not None:
-            LoginAttempt.objects.filter(user=user).delete()
-            # Далее выполнить вход пользователя
-            token = {"access": str(AccessToken.for_user(user)),
-                     "refresh": str(RefreshToken.for_user(user)), }
-            login(request, user)
-            return Response(data={"message": "Вход в систему выполнен успешно", "token": token},
-                            status=status.HTTP_200_OK)
+        if serializer.is_valid(raise_exception=True):
+            user = authenticate(request, **serializer.validated_data)
+            login_attempt, created = LoginAttempt.objects.get_or_create(user=user)
 
-        else:
-            try:
-                user = CustomUser.objects.get(username=serializer.validated_data['username'])
-                login_attempt, created = LoginAttempt.objects.get_or_create(user=user)
-                login_attempt.failed_attempts += 1
-                login_attempt.last_failed_attempt = timezone.now()
-                login_attempt.save()
+            if login_attempt.is_blocked():
+                return Response(
+                    {'detail': 'Превышено максимальное количество попыток, пользователь временно заблокирован'},
+                    status=status.HTTP_423_LOCKED)
+
+            if user is None:
+                login_attempt.increase_failed_attempts()
+
                 if login_attempt.failed_attempts >= MAX_LOGIN_ATTEMPTS:
-                    # Заблокировать доступ на LOCKOUT_DURATION
-                    login_attempt.blocked_until = timezone.now() + LOCKOUT_DURATION
-                    login_attempt.save()
-                    return Response({'message': 'Программа временно не работает. Обратитесь к администратору!'},
-                                    status=status.HTTP_401_UNAUTHORIZED)
-                else:
-                    return Response({'message': 'Не правильные данные! Попробуйте еще раз!'}, status=status.HTTP_401_UNAUTHORIZED)
-            except ObjectDoesNotExist:
-                return Response({"message": "Пользователь не существует!"}, status=status.HTTP_404_NOT_FOUND)
+                    login_attempt.block_user(LOCKOUT_DURATION)
 
+                return Response({'detail': 'Неверные данные, попробуйте ещё раз!'}, status=status.HTTP_400_BAD_REQUEST)
 
+            # Успешная аутентификация
+            login_attempt.unblock_user()  # Снимаем блокировку, если она была
+            login(request, user)
+            return Response(data={"message": "Вход в систему выполнен успешно",
+                                  "access": str(AccessToken.for_user(user)),
+                                  "refresh": str(RefreshToken.for_user(user)),
+                                  "role": CustomUserSerializer(user).data}, status=status.HTTP_200_OK)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 class LogoutAPIView(APIView):
     permission_classes = [IsAuthenticated]
-
     def post(self, request):
         auth_token = request.data.get('access')
         if auth_token and auth_token.user == request.user:
             auth_token.delete()
         return Response({"message": "Вы успешно вышли из системы."}, status=status.HTTP_200_OK)
-
 
 class RegistrationView(generics.CreateAPIView):
     queryset = CustomUser.objects.all()
@@ -76,3 +68,4 @@ class RegistrationView(generics.CreateAPIView):
         password = request.data.get('password')
         CustomUser.objects.create_user(username=username, password=password)
         return Response({"message": "Пользователь успешно создан"}, status=status.HTTP_201_CREATED)
+
