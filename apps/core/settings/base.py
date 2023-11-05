@@ -16,6 +16,7 @@ THEME_PARTY_APPS = [
     'debug_toolbar',
     'corsheaders',
     'drf_yasg',
+    'django_filters',
 ]
 
 APPS = [

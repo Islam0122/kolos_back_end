@@ -1,15 +1,13 @@
-from django_filters import rest_framework as filters
+import django_filters
 from product import models as prod_mod
 
 
-class CharFilterInFilter(filters.BaseInFilter, filters.CharFilter):
+class CharFilterInFilter(django_filters.rest_framework.BaseInFilter, django_filters.rest_framework.CharFilter):
     pass
 
-class ProductFilter(filters.FilterSet):
-    category = CharFilterInFilter(field_name='category', lookup_expr='in')
-    create_data__gte = filters.DateFilter(field_name="created_at", lookup_expr="gte")
-    create_data__lte = filters.DateFilter(field_name="created_at", lookup_expr="lte")
+
+class ProductFilter(django_filters.rest_framework.FilterSet):
 
     class Meta:
         model = prod_mod.ProductItem
-        fields = ['category', 'create_date']
+        fields = ['category',]
