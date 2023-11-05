@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Distributor
+from distributor.models import Distributor
 
 
 class DistributorSerializer(serializers.ModelSerializer):
