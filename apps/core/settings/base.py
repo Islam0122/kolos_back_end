@@ -1,6 +1,6 @@
 from datetime import timedelta
 from pathlib import Path
-
+from django.utils import timezone
 from .env_reader import env
 
 SECRET_KEY = env('SECRET_KEY')
@@ -167,6 +167,10 @@ AUTH_USER_MODEL = 'users.CustomUser'
 PASSWORD_HASHERS = [
     'django.contrib.auth.hashers.PBKDF2PasswordHasher',
 ]
+
+# попытки входа
+MAX_LOGIN_ATTEMPTS = 4
+LOCKOUT_DURATION = timezone.timedelta(minutes=2)  # Время блокировки (24 часа)
 
 
 from .cors import *

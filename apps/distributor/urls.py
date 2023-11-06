@@ -9,5 +9,5 @@ urlpatterns = [
     path('archive/', views.ArchivedDistributorView.as_view({'get': 'list'})),
     path('archive/<int:pk>/', views.ArchivedDistributorView.as_view({'get': 'retrieve',
                                                                  'put': 'update',
-                                                                 'delete': 'restore'}))
+                                                                 'delete': 'destroy'}))
 ]

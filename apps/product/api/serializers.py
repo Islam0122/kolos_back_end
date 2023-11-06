@@ -2,8 +2,16 @@ from rest_framework import serializers
 from product.models import AbstractProduct, ProductItem
 
 
+class CategorySerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = ProductItem
+        fields = ('id', 'category')
+
+
 class ProductItemSerializer(serializers.ModelSerializer):
-    # product = AbstractProductSerializer()
+    category = CategorySerializer(many=True)
+
     class Meta:
         model = ProductItem
         fields = [
@@ -12,6 +20,7 @@ class ProductItemSerializer(serializers.ModelSerializer):
             'unit', 'quantity', 'price',
             'sum', 'category', 'state',
             'created_at', 'updated_at']
+
 
         # def create(self, validated_data):
     #     # Extract the nested product data
