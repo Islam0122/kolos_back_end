@@ -1,8 +1,15 @@
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.viewsets import ModelViewSet
+from django.http import JsonResponse as json_resp
 
 from product import models as prod_mod
 from product.api import serializers as prod_ser
+import seeder_beer as sd
+
+
+def seeder_start(request):
+    sd.seed()
+    return json_resp({'status': 'success'})
 
 
 

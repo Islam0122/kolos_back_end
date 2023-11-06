@@ -13,7 +13,7 @@ class ProductItem(BaseModel):
     identification_number = models.CharField(
         _('ID'),
         max_length=100,
-        unique=True
+        
     )
     unit = models.CharField(
         _('Ед.измерения'),
