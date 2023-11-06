@@ -8,8 +8,6 @@ urlpatterns = [
     path('<int:pk>/', views.ProductViewSet.as_view({'get': 'retrieve',
                                                     'put': 'update',
                                                     'delete': 'destroy'})),
-
-
     path('archive/', views.ArchivedProductView.as_view({'get': 'list'})),
     path('archive/<int:pk>/', views.ArchivedProductView.as_view({'get': 'retrieve',
                                                                  'put': 'update',
