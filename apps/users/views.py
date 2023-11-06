@@ -5,13 +5,11 @@ from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken, AccessToken
 from django.contrib.auth import authenticate, login
 from .models import CustomUser, LoginAttempt
-from .serializers import UserSerializer, UserCreateSerializer, CustomUserSerializer
+from .serializers import UserSerializer, UserCreateSerializer
 from rest_framework.views import APIView
 from drf_yasg.utils import swagger_auto_schema
-# from apps.core.settings.base import MAX_LOGIN_ATTEMPTS, LOCKOUT_DURATION
+from core.settings.base import MAX_LOGIN_ATTEMPTS, LOCKOUT_DURATION
 
-MAX_LOGIN_ATTEMPTS = 4
-LOCKOUT_DURATION = timezone.timedelta(minutes=2)
 class TestEndpoint(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -34,7 +32,6 @@ class LoginAPIView(APIView):
 
             if user is None:
                 login_attempt.increase_failed_attempts()
-
                 if login_attempt.failed_attempts >= MAX_LOGIN_ATTEMPTS:
                     login_attempt.block_user(LOCKOUT_DURATION)
 
@@ -43,12 +40,14 @@ class LoginAPIView(APIView):
             # Успешная аутентификация
             login_attempt.unblock_user()  # Снимаем блокировку, если она была
             login(request, user)
+
             return Response(data={"message": "Вход в систему выполнен успешно",
                                   "access": str(AccessToken.for_user(user)),
                                   "refresh": str(RefreshToken.for_user(user)),
-                                  "role": CustomUserSerializer(user).data}, status=status.HTTP_200_OK)
+                                  "role": "Директор" if user.is_superuser else "Завсклад"}, status=status.HTTP_200_OK)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 class LogoutAPIView(APIView):
     permission_classes = [IsAuthenticated]
     def post(self, request):
