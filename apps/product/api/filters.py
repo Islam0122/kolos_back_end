@@ -10,4 +10,4 @@ class ProductFilter(django_filters.rest_framework.FilterSet):
 
     class Meta:
         model = prod_mod.ProductItem
-        fields = ['category',]
+        fields = ['category',"state"]

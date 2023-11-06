@@ -16,7 +16,7 @@ from product.api.filters import ProductFilter
 
 
 class ProductViewSet(ModelViewSet):
-    queryset = prod_mod.ProductItem.objects.filter(is_archived=False, state='Normal')
+    queryset = prod_mod.ProductItem.objects.filter(is_archived=False)
     serializer_class = prod_ser.ProductItemSerializer
     lookup_field = 'pk'
     filter_backends = [filters.SearchFilter, django_filters.rest_framework.DjangoFilterBackend]
@@ -30,23 +30,6 @@ class ProductViewSet(ModelViewSet):
         instance.save()
 
         return Response(status=status.HTTP_204_NO_CONTENT)
-
-
-class InvalidProductViewSet(ModelViewSet):
-    queryset = prod_mod.ProductItem.objects.filter(state='Invalid')
-    serializer_class = prod_ser.ProductItemSerializer
-    lookup_field = 'pk'
-    filter_backends = [filters.SearchFilter]
-    search_fields = ['name']
-
-    # delete -> archived
-    def destroy(self, request, *args, **kwargs):
-        instance = self.get_object()
-        instance.is_archived = True
-        instance.save()
-
-        return Response(status=status.HTTP_204_NO_CONTENT)
-
 
 class ArchivedProductView(ModelViewSet):
     queryset = prod_mod.ProductItem.objects.filter(is_archived=True)
