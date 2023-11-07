@@ -1,6 +1,6 @@
 from datetime import timedelta
 from pathlib import Path
-
+from django.utils import timezone
 from .env_reader import env
 
 SECRET_KEY = env('SECRET_KEY')
@@ -16,6 +16,7 @@ THEME_PARTY_APPS = [
     'debug_toolbar',
     'corsheaders',
     'drf_yasg',
+    'django_filters',
 ]
 
 APPS = [
@@ -114,7 +115,7 @@ REST_FRAMEWORK = {
 
     ),
     "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.LimitOffsetPagination",
-    "PAGE_SIZE": 13,
+    "PAGE_SIZE": 10,
     "DEFAULT_PERMISSION_CLASSES": [
         "rest_framework.permissions.AllowAny"
     ],
@@ -166,6 +167,10 @@ AUTH_USER_MODEL = 'users.CustomUser'
 PASSWORD_HASHERS = [
     'django.contrib.auth.hashers.PBKDF2PasswordHasher',
 ]
+
+# попытки входа
+MAX_LOGIN_ATTEMPTS = 4
+LOCKOUT_DURATION = timezone.timedelta(minutes=2)  # Время блокировки (24 часа)
 
 
 from .cors import *

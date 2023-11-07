@@ -5,4 +5,6 @@ from . import models as m
 
 @admin.register(m.ProductItem)
 class ProductAdmin(admin.ModelAdmin):
-    list_filter = ["is_archived"]
+    list_filter = ["is_archived","category","state"]
+
+

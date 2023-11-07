@@ -12,10 +12,12 @@ class Unit(models.TextChoices):
 class Category(models.TextChoices):
     """Категории"""
     ALCOHOL = 'alcohol', 'Алгокольный'
-    NOT_ALCOHOL = 'Безалкогольный', 'Безалкогольный'
+    NOT_ALCOHOL = 'notAlcohol', 'Безалкогольный'
 
 
 class State(models.TextChoices):
     """Состояние товара"""
     NORMAL = 'Normal', 'Норма'
     INVALID = 'Invalid', 'Брак'
+
+
