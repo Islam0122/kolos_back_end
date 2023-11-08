@@ -16,6 +16,7 @@ from . import choices
 #     )
 
 
+
 class Distributor(models.Model):
     """В verbose_name желательно использовать from django.utils.translation import gettext_lazy, для многоязычности и
     для масштабируемости проекта в дальнейшем """

@@ -1,37 +1,15 @@
 from rest_framework import serializers
-from product.models import AbstractProduct, ProductItem
+from product import models as m
 
 
 class CategorySerializer(serializers.ModelSerializer):
-
     class Meta:
-        model = ProductItem
-        fields = ('id', 'category')
+        model = m.Category
+        fields = '__all__'
 
 
 class ProductItemSerializer(serializers.ModelSerializer):
-    category = CategorySerializer(many=True)
 
     class Meta:
-        model = ProductItem
-        fields = [
-            'id', 'name',
-            'identification_number',
-            'unit', 'quantity', 'price',
-            'sum', 'category', 'state',
-            'created_at', 'updated_at']
-
-
-        # def create(self, validated_data):
-    #     # Extract the nested product data
-    #     product_data = validated_data.pop('product')
-    #     product_item = ProductItem.objects.create(**validated_data)
-    #     product, created = AbstractProduct.objects.get_or_create(**product_data)
-    #     product_item.product = product
-    #     product_item.save()
-    #     return product_item
-
-# class ProductSerializer(serializers.ModelSerializer):
-#     class Meta:
-#         model = prod_mod.ProductItem
-#
+        model = m.Product
+        fields = '__all__'

@@ -4,17 +4,25 @@ from django.utils.translation import gettext_lazy as _
 from . import choices
 from common.models import BaseModel
 
+class Category(models.Model):
+    title = models.CharField(_('Категория'),
+                             max_length=40
+                             )
+    def __str__(self):
+        return f'category -> {self.title}'
 
-class AbstractProduct(BaseModel):
-    category = models.CharField(
-        _('Категория'),
-        max_length=40,
-        choices=choices.Category.choices,
-        default=choices.Category.ALCOHOL
-    )
+
+
+class Product(models.Model):
     name = models.CharField(
         _('Наименование'),
         max_length=120
+    )
+    category= models.ForeignKey(
+        Category,
+        on_delete=models.CASCADE,
+        related_name='products',
+
     )
     identification_number = models.CharField(
         _('ID'),
@@ -28,20 +36,16 @@ class AbstractProduct(BaseModel):
         default=choices.Unit.ITEM
     )
 
-    class Meta:
-        abstract = True
-
-class ProductItem(AbstractProduct):
     quantity = models.IntegerField(
         _('Кол-во'),
         default=1
     )
-    price = models.IntegerField(
+    price =models.IntegerField(
         _('Цена'),
-    )  # сделайте IntegerField price
+    )
     sum = models.IntegerField(
         _('Сумма'),
-        default=0
+        default= 0
     )
     state = models.CharField(
         _('Состояние'),
@@ -49,14 +53,11 @@ class ProductItem(AbstractProduct):
         choices=choices.State.choices,
         default='НОРМА'
     )
+
     is_archived = models.BooleanField(
         _('Архив? '),
         default=False
     )
-    # def total_price(self):
-    #     # Рассчитываем сумму между ценой и количеством
-    #     return self.price * self.quantity
-
     def __str__(self):
         return f'наименование: {self.name}, кол-во: {self.quantity}'
 
