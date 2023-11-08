@@ -15,6 +15,7 @@ urlpatterns = [
                                                     'get': 'retrieve',
                                                     'put': 'update',
                                                     'delete': 'destroy'})),
+    path('db_seed/', views.seeder_start),
 
     path('archive/', views.ArchivedProductView.as_view({'get': 'list'})),
     path('archive/<int:pk>/', views.ArchivedProductView.as_view({'get': 'retrieve',
