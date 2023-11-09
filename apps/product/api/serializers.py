@@ -1,37 +1,30 @@
 from rest_framework import serializers
-from product.models import AbstractProduct, ProductItem
+from product import models as m
 
 
 class CategorySerializer(serializers.ModelSerializer):
-
     class Meta:
-        model = ProductItem
-        fields = ('id', 'category')
+        model = m.Category
+        fields = '__all__'
 
 
 class ProductItemSerializer(serializers.ModelSerializer):
-    category = CategorySerializer(many=True)
-
     class Meta:
-        model = ProductItem
-        fields = [
-            'id', 'name',
-            'identification_number',
-            'unit', 'quantity', 'price',
-            'sum', 'category', 'state',
-            'created_at', 'updated_at']
+        model = m.Product
+        fields = '__all__'
 
 
-        # def create(self, validated_data):
-    #     # Extract the nested product data
-    #     product_data = validated_data.pop('product')
-    #     product_item = ProductItem.objects.create(**validated_data)
-    #     product, created = AbstractProduct.objects.get_or_create(**product_data)
-    #     product_item.product = product
-    #     product_item.save()
-    #     return product_item
+class ProductTipSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = m.Product
+        fields = ('id', 'name')
 
-# class ProductSerializer(serializers.ModelSerializer):
-#     class Meta:
-#         model = prod_mod.ProductItem
-#
+
+data_json = {
+    'name': 'Product',
+}
+
+# пользователь вводит строку
+# текста я отправлюяь с ф на б запрос и добавлюяю кателгоии и стате
+# мы делем поиск по всей базе товаров и смотрим соападения если происх
+# совпдажние мы добавляем совпадание если произошло совпадение наименованию то отправлем по наименованию

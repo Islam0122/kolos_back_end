@@ -3,7 +3,7 @@ import random
 import datetime
 from faker import Faker
 from distributor.models import Distributor
-from product.models import ProductItem
+from product.models import Product, Category
 
 django.setup()
 fake = Faker()
@@ -11,6 +11,17 @@ fake = Faker()
 distributors = ['Артур', 'Влад', 'Alex', 'Jhon', 'David']
 
 regions = ['kg', 'eu', 'ru']
+
+_category = ['Алкашка', 'винишко']
+
+
+def create_category():
+    Category.objects.all().delete()
+    for category in _category:
+        Category.objects.create(
+            title=category
+        )
+
 
 
 def create_distributor():
@@ -38,17 +49,19 @@ products = ['Пиво', 'Соки', 'Вино', 'водка', 'безалког�
 
 
 def create_product():
-    ProductItem.objects.all().delete()
+    Product.objects.all().delete()
     for product in products:
-        ProductItem.objects.create(
+        Product.objects.create(
             name=product,
             identification_number="321",
             unit=random.choice(['шт', 'кг', 'литр']),
             quantity=123,
             price=23243,
             sum=43434,
-            category=random.choice(['алкогольные', 'безалкогольные']),
-            state='норм',
+            category=Category.objects.create(
+                title=_category
+            ),
+            state='норма',
             is_archived=random.choice([True, False])
 
         )
