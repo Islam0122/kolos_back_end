@@ -5,20 +5,20 @@ from product import models as m
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = m.Category
-        fields = '__all__'
+        fields = ['id','title',]
 
 
 class ProductItemSerializer(serializers.ModelSerializer):
     class Meta:
         model = m.Product
-        fields = '__all__'
+        fields = [ 'id', 'name', 'identification_number', 'unit', 'quantity', 'price',
+                          'sum', 'category', 'state']
 
 
 class ProductTipSerializer(serializers.ModelSerializer):
     class Meta:
         model = m.Product
         fields = ('id', 'name')
-
 
 data_json = {
     'name': 'Product',
