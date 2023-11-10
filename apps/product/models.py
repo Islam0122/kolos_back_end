@@ -9,7 +9,7 @@ class Category(models.Model):
                              max_length=40
                              )
     def __str__(self):
-        return f'category -> {self.title}'
+        return f' {self.title}'
 
 
 
@@ -51,7 +51,7 @@ class Product(models.Model):
         _('Состояние'),
         max_length=20,
         choices=choices.State.choices,
-        default='НОРМА'
+        default=choices.State.NORMAL
     )
 
     is_archived = models.BooleanField(
@@ -60,6 +60,7 @@ class Product(models.Model):
     )
     def __str__(self):
         return f'наименование: {self.name}, кол-во: {self.quantity}'
+
 
     def save(self, *args, **kwargs):
         self.sum = self.quantity * self.price
