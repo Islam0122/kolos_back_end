@@ -6,10 +6,9 @@ from rest_framework.viewsets import ModelViewSet
 from django.http import JsonResponse as json_resp
 from django_filters.rest_framework import DjangoFilterBackend
 
-from product.models import Category, Product
+from product import models as m
 from .filters import ProductFilter
-from .serializers import CategorySerializer, ProductItemSerializer, ProductTipSerializer
-
+from . import  serializers as ser
 import seeder_beer as sd
 
 
@@ -20,18 +19,18 @@ def seeder_start(request):
 
 
 class CategoryViewSet(ModelViewSet):
-    queryset = Category.objects.all()
-    serializer_class = CategorySerializer
+    queryset = m.Category.objects.all()
+    serializer_class = ser.CategorySerializer
     lookup_field = 'pk'
 
 
 class ProductItemViewSet(ModelViewSet):
-    queryset = Product.objects.filter(is_archived=False)
-    serializer_class = ProductItemSerializer
+    queryset = m.Product.objects.filter(is_archived=False)
+    serializer_class = ser.ProductItemSerializer
     lookup_field = 'pk'
-    filter_backends = [SearchFilter, DjangoFilterBackend]
-    search_fields = ['name']
-    filterset_class = ProductFilter
+    # filter_backends = [SearchFilter, DjangoFilterBackend]
+    # search_fields = ['name']
+    # filterset_class = ProductFilter
 
 
     def destroy(self, request, *args, **kwargs):
@@ -43,8 +42,8 @@ class ProductItemViewSet(ModelViewSet):
 
 
 class ArchivedProductView(ModelViewSet):
-    queryset = Product.objects.filter(is_archived=True)
-    serializer_class = ProductItemSerializer
+    queryset = m.Product.objects.filter(is_archived=True)
+    serializer_class = ser.ProductItemSerializer
     lookup_field = 'pk'
 
     # restore -> product
@@ -59,6 +58,6 @@ class ArchivedProductView(ModelViewSet):
 
 
 class TipViewSet(ModelViewSet):
-    queryset = Product.objects.all()
-    serializer_class = ProductTipSerializer
+    queryset = m.Product.objects.all()
+    serializer_class = ser.ProductTipSerializer
     lookup_field = 'pk'
