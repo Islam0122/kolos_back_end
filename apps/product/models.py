@@ -13,7 +13,10 @@ class Category(models.Model):
         return f' {self.title}'
 
 
-class  AbstarctProduct(BaseModel):
+
+
+
+class AbstarctProduct(BaseModel):
     name = models.CharField(
         _('Наименование'),
         max_length=120

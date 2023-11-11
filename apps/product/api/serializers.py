@@ -8,6 +8,8 @@ class CategorySerializer(serializers.ModelSerializer):
         fields = ['id', 'title']
 
 class AbstractProductSerializer(serializers.ModelSerializer):
+
+
     category = serializers.SlugRelatedField(slug_field='title', queryset=m.Category.objects.all())
     class Meta:
         model = m.AbstarctProduct
@@ -17,7 +19,11 @@ class AbstractProductSerializer(serializers.ModelSerializer):
 
 
 class ProductItemSerializer(serializers.ModelSerializer):
+
+
     sum = serializers.ReadOnlyField()
+
+
     class Meta:
         model = m.Product
         fields = ['id', 'product', 'quantity', 'price', 'unit', 'sum', 'state']
