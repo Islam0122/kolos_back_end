@@ -24,21 +24,31 @@ class CategoryViewSet(ModelViewSet):
     lookup_field = 'pk'
 
 
+
+
+
+
 class ProductItemViewSet(ModelViewSet):
     queryset = m.Product.objects.filter(is_archived=False)
     serializer_class = ser.ProductItemSerializer
     lookup_field = 'pk'
-    # filter_backends = [SearchFilter, DjangoFilterBackend]
-    # search_fields = ['name']
-    # filterset_class = ProductFilter
+    filter_backends = [SearchFilter, DjangoFilterBackend]
+    search_fields = ['product__name','product__identification_number']
+    filterset_class = ProductFilter
 
 
     def destroy(self, request, *args, **kwargs):
-        instance = self  .get_object()
+        instance = self.get_object()
         instance.is_archived = True
         instance.save()
 
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+
+
+
+
 
 
 class ArchivedProductView(ModelViewSet):
