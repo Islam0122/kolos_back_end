@@ -25,6 +25,7 @@ jedi==0.19.1
 matplotlib-inline==0.1.6
 packaging==23.2
 parso==0.8.3
+phonenumbers==8.13.24
 pickleshare==0.7.5
 Pillow==10.0.1
 prompt-toolkit==3.0.39
