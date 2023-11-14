@@ -27,9 +27,8 @@ class Product(BaseModel):
         related_name='products',
 
     )
-    identification_number = models.CharField(
+    identification_number = models.IntegerField(
         _('ID'),
-        max_length=100,
 
     )
     unit = models.CharField(
