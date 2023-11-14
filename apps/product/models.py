@@ -28,7 +28,7 @@ class Product(BaseModel):
 
     )
     identification_number = models.IntegerField(
-        _('ID'),
+        _('ID'),unique=True
 
     )
     unit = models.CharField(
