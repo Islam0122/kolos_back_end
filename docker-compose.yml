@@ -1,34 +1,20 @@
-version: '3.3'
+version: '3'
 
 services:
-
-  back-end:
-    user: "root"
+  backend:
     build:
-      context: ./apps
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: ./apps/Dockerfile
+    container_name: kolos_backend
+    environment:
+      - DJANGO_SUPERUSER_USERNAME=${DJANGO_SUPERUSER_USERNAME}
+      - DJANGO_SUPERUSER_EMAIL=${DJANGO_SUPERUSER_EMAIL}
+      - DJANGO_SUPERUSER_PASSWORD=${DJANGO_SUPERUSER_PASSWORD}
     command: >
-      sh -c "python manage.py collectstatic --noinput  && python manage.py makemigrations && python manage.py migrate &&
-             gunicorn core.wsgi:application --bind 0.0.0.0:8000 --access-logfile -"
-    volumes:
-      - static_volume:/home/app/web/static
-      - media_volume:/home/app/web/media
+      sh -c "
+      python manage.py makemigrations &&
+      python manage.py migrate &&
+      python manage.py createsuperuser --noinput &&
+      python manage.py runserver 0.0.0.0:83"
     ports:
-      - "8000:8000"
-    env_file:
-      - ./apps/.env/
-
-
-  db:
-    image: postgres:15.1-alpine3.17
-    ports:
-      - "5432:5432"
-    volumes:
-      - postgres_data:/var/lib/postgres/data/
-    env_file:
-      - ./apps/.env.db/
-
-volumes:
-  postgres_data:
-  static_volume:
-  media_volume:
+      - "83:83"
