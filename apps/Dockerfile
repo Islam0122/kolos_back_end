@@ -23,7 +23,7 @@ COPY . .
 
 
 # install dependencies
-COPY apps/requirements/prod .
+COPY requirements/prod .
 RUN pip wheel --no-cache-dir --no-deps --wheel-dir /usr/src/app/wheels -r prod
 
 
