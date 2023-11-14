@@ -16,7 +16,7 @@ class Category(models.Model):
 
 
 
-class Product(models.Model):
+class Product(BaseModel):
     name = models.CharField(
         _('Наименование'),
         max_length=120
