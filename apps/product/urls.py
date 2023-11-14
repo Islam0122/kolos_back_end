@@ -16,14 +16,7 @@ urlpatterns = [
     path('archive/<int:pk>/', views.ArchivedProductView.as_view({'get': 'retrieve',
                                                                  'put': 'update',
                                                                  'delete': 'restore'})),
-    #category
 
-
-    path('category/', views.CategoryViewSet.as_view({'get': 'list',
-                                                     'post': 'create'})),
-    path('category/<int:pk>/', views.CategoryViewSet.as_view({'get': 'retrieve',
-                                                                 'put': 'update',
-                                                                 'delete': 'restore'})),
     path('tip/', views.TipViewSet.as_view({'get': 'list'}))
 ]
 

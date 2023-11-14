@@ -19,10 +19,6 @@ def seeder_start(request):
 
 
 
-class CategoryViewSet(ModelViewSet):
-    queryset = Category.objects.all()
-    serializer_class = CategorySerializer
-    lookup_field = 'pk'
 
 
 class ProductItemViewSet(ModelViewSet):
