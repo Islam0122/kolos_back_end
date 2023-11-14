@@ -4,9 +4,12 @@ from django.utils.translation import gettext_lazy as _
 from . import choices
 from common.models import BaseModel
 
+
 class Category(models.Model):
-    title = models.CharField(_('Категория'),
-                             max_length=40
+    title = models.CharField(
+        _('Категория'),
+         max_length=40,
+         primary_key=True
                              )
     def __str__(self):
         return f' {self.title}'
@@ -58,6 +61,7 @@ class Product(models.Model):
         _('Архив? '),
         default=False
     )
+
     def __str__(self):
         return f'наименование: {self.name}, кол-во: {self.quantity}'
 

@@ -30,7 +30,7 @@ class ProductItemViewSet(ModelViewSet):
     serializer_class = ProductItemSerializer
     lookup_field = 'pk'
     filter_backends = [SearchFilter, DjangoFilterBackend]
-    search_fields = ['name']
+    search_fields = ['name','identification_number']
     filterset_class = ProductFilter
 
 
@@ -46,6 +46,9 @@ class ArchivedProductView(ModelViewSet):
     queryset = Product.objects.filter(is_archived=True)
     serializer_class = ProductItemSerializer
     lookup_field = 'pk'
+    filter_backends = [SearchFilter, DjangoFilterBackend]
+    search_fields = ['name', 'identification_number']
+    filterset_class = ProductFilter
 
     # restore -> product
     def restore(self, request, *args, **kwargs):
