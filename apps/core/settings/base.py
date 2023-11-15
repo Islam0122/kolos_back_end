@@ -1,6 +1,5 @@
 from datetime import timedelta
 from pathlib import Path
-from django.utils import timezone
 from .env_reader import env
 
 SECRET_KEY = env('SECRET_KEY')
@@ -179,8 +178,8 @@ PASSWORD_HASHERS = [
 
 # попытки входа
 AXES_FAILURE_LIMIT = 3  # Попытки входа
-AXES_LOCKOUT_TIME = 1/30 # Время блокировки (24 часа)
-AXES_COOLOFF_TIME = 2
+AXES_LOCK_OUT_AT_FAILURE = True
+AXES_COOLOFF_TIME = timedelta(minutes=2) # Время блокировки (24 часа)
 
 from .cors import *
 
