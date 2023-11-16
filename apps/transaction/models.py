@@ -1,20 +1,28 @@
+from django.core.validators import MinValueValidator
 from django.db import models
 from distributor.models import Distributor
 from product.models import Product
 
 
-class Order(models.Model):
+class Invoice(models.Model):
     product = models.ForeignKey(
         Product,
         on_delete=models.CASCADE,
-        # related_name='order',
+        related_name='product_invoice',
     )
     distributor = models.ForeignKey(
         Distributor,
         on_delete=models.CASCADE,
-        # related_name='order',
+        related_name='distrib_invoice',
     )
-    quantity = models.IntegerField(default=1)
+    quantity = models.PositiveIntegerField(
+        default=1,
+        validators=[MinValueValidator(1)],
+        verbose_name='Колличество'
+    )
+    created_at = models.DateTimeField(
+        auto_now_add=True,
+        verbose_name="Дата добавления")
 
     def total_price(self):
         return self.product.price * self.quantity

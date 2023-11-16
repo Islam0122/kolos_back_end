@@ -3,9 +3,9 @@ from .api import views
 
 urlpatterns = [
     #order
-    path('', views.OrderViewSet.as_view({'get': 'list'})),
-    path('<int:pk>/', views.OrderViewSet.as_view({'get': 'retrieve',
-                                                    'post': 'create'})),
+    path('', views.InvoiceViewSet.as_view({'get': 'list',
+                                        'post': 'create'})),
+    path('<int:pk>/', views.InvoiceViewSet.as_view({'get': 'retrieve'})),
 
 
     # path('archive/', views.ArchivedOrderView.as_view({'get': 'list'})),

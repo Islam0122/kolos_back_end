@@ -2,9 +2,9 @@ from rest_framework import serializers
 from transaction import models as m
 
 
-class OrderSerializer(serializers.ModelSerializer):
+class InvoiceSerializer(serializers.ModelSerializer):
     class Meta:
-        model = m.Order
+        model = m.Invoice
         fields = '__all__'
 
     def to_representation(self, instance):
