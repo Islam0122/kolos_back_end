@@ -8,10 +8,7 @@ class Unit(models.TextChoices):
     LITER = 'liter', 'литр'
 
 
-
 class State(models.TextChoices):
     """Состояние товара"""
     NORMAL = 'normal', 'норма'
     DEFECT = 'defect', 'брак'
-
-

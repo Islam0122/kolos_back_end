@@ -6,45 +6,25 @@ from product import models as m
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = m.Category
-        fields = ['id', 'title']
-
-
-class AbstractProductSerializer(serializers.ModelSerializer):
-    category = serializers.SlugRelatedField(slug_field='title', queryset=m.Category.objects.all())
-
-    class Meta:
-        model = m.AbstarctProduct
-        fields = ['id', 'name', 'category', 'identification_number']
+        fields = ['title', ]
 
 
 class ProductItemSerializer(serializers.ModelSerializer):
+    category = serializers.SlugRelatedField(slug_field='title', queryset=m.Category.objects.all())
+
+    # category_id = serializers.PrimaryKeyRelatedField(source='category', read_only=True)
     sum = serializers.ReadOnlyField()
 
     class Meta:
         model = m.Product
-        fields = ['id', 'product', 'quantity', 'price', 'unit', 'sum', 'state']
-
-    def to_representation(self, instance):
-        representation = super().to_representation(instance)
-        product = instance.product
-        representation['product'] = {
-            'name': product.name,
-            'category': product.category.title,
-            'identification_number': product.identification_number,
-
-        }
-        return representation
+        fields = ['id', 'name', 'category', 'identification_number', 'unit', 'quantity', 'price',
+                  'sum', 'state']
 
 
 class ProductTipSerializer(serializers.ModelSerializer):
-    product = serializers.SerializerMethodField()
-
     class Meta:
         model = m.Product
-        fields = ('id', 'product')
-
-    def get_product(self, obj):
-        return obj.product.name
+        fields = ('id', 'name')
 
 # пользователь вводит строку
 # текста я отправлюяь с ф на б запрос и добавлюяю кателгоии и стате

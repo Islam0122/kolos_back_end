@@ -9,26 +9,26 @@ services:
       dockerfile: Dockerfile
     command: >
       sh -c "python manage.py collectstatic --noinput  && python manage.py makemigrations && python manage.py migrate &&
-             gunicorn core.wsgi:application --bind 0.0.0.0:8000 --access-logfile -"
+             gunicorn core.wsgi:application --bind 0.0.0.0:8004 --access-logfile -"
     volumes:
       - static_volume:/home/app/web/static
       - media_volume:/home/app/web/media
     ports:
-      - "8000:8000"
+      - "83:8004"
     env_file:
       - ./apps/.env/
 
 
-  db:
-    image: postgres:15.1-alpine3.17
-    ports:
-      - "5432:5432"
-    volumes:
-      - postgres_data:/var/lib/postgres/data/
-    env_file:
-      - ./apps/.env.db/
+#  db:
+#    image: postgres:15.1-alpine3.17
+#    ports:
+#      - "5432:5432"
+#    volumes:
+#      - postgres_data:/var/lib/postgres/data/
+#    env_file:
+#      - ./src/.env.db/
 
 volumes:
-  postgres_data:
+#  postgres_data:
   static_volume:
   media_volume:

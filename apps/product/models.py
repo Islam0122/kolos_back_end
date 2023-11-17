@@ -8,14 +8,15 @@ from common.models import BaseModel
 class Category(models.Model):
     title = models.CharField(
         _('Категория'),
-        max_length=40
-    )
-
+         max_length=40,
+         primary_key=True
+                             )
     def __str__(self):
         return f' {self.title}'
 
 
-class AbstarctProduct(BaseModel):
+
+class Product(BaseModel):
     name = models.CharField(
         _('Наименование'),
         max_length=120
@@ -31,30 +32,23 @@ class AbstarctProduct(BaseModel):
         max_length=100,
 
     )
-
-    def __str__(self):
-        return f' {self.name}'
-
-
-class Product(models.Model):
-    product = models.ForeignKey(
-        AbstarctProduct,
-        on_delete=models.CASCADE,
-        related_name='products',
-
-    )
-    quantity = models.IntegerField(
-        _('Кол-во'),
-        default=1
-    )
     unit = models.CharField(
         _('Ед.измерения'),
         max_length=8,
         choices=choices.Unit.choices,
         default=choices.Unit.ITEM
     )
-    price = models.IntegerField(
+
+    quantity = models.IntegerField(
+        _('Кол-во'),
+        default=1
+    )
+    price =models.IntegerField(
         _('Цена'),
+    )
+    sum = models.IntegerField(
+        _('Сумма'),
+        default= 0
     )
     state = models.CharField(
         _('Состояние'),
@@ -67,17 +61,14 @@ class Product(models.Model):
         _('Архив? '),
         default=False
     )
-    sum = models.IntegerField(
-        _('Сумма'),
-        default=0
-    )
+
+    def __str__(self):
+        return f'наименование: {self.name}, кол-во: {self.quantity}'
+
 
     def save(self, *args, **kwargs):
         self.sum = self.quantity * self.price
         return super().save(*args, **kwargs)
-
-    def __str__(self):
-        return f'наименование: {self.product.name}, кол-во: {self.quantity}'
 
     class Meta:
         verbose_name = _('Товар')
