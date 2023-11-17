@@ -1,12 +1,12 @@
 import django
 import random
 import datetime
-from faker import Faker
+import faker
 from distributor.models import Distributor
 from product.models import Product, Category
 
 django.setup()
-fake = Faker()
+fake = faker.Faker()
 
 distributors = ['Артур', 'Влад', 'Alex', 'Jhon', 'David']
 
@@ -49,7 +49,7 @@ products = ['Пиво', 'Соки', 'Вино', 'водка', 'безалког�
 
 
 def create_product():
-    Product.objects.all().delete()
+    Produc.objects.all().delete()
     for product in products:
         Product.objects.create(
             name=product,
