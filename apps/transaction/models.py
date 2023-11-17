@@ -1,4 +1,5 @@
 from django.db import models
+
 from distributor.models import Distributor
 from product.models import Product
 

@@ -1,25 +1,10 @@
-from django.db import models
-from django.utils.translation import gettext_lazy as _
 import phonenumbers
 
-from . import choices
-
-
-# Создал модель контакт для примера
-# class Contact(models.Model):
-#     distributor = models.ForeignKey('Distributor', on_delete=models.CASCADE)
-#     phone_number = models.CharField(
-#         max_length=15,
-#         blank=True,
-#         null=True,
-#         verbose_name=_("Contact Phone")
-#     )
-
+from django.db import models
+from django.utils.translation import gettext_lazy as _
 
 
 class Distributor(models.Model):
-    """В verbose_name желательно использовать from django.utils.translation import gettext_lazy, для многоязычности и
-    для масштабируемости проекта в дальнейшем """
     photo = models.ImageField(
         upload_to='media/distributor_images/',
         blank=True,
@@ -30,35 +15,34 @@ class Distributor(models.Model):
         max_length=50,
         blank=False,
         null=False,
-        verbose_name='ФИО',
+        verbose_name=_('ФИО'),
     )
     region = models.CharField(
-        choices=choices.REGION_CHOICES,
         max_length=150,
         blank=False,
         null=False,
-        verbose_name='Регион'
+        verbose_name=_('Регион')
     )
     inn = models.IntegerField(
         blank=False,
         unique=True,
         null=False,
-        verbose_name='ИНН'
+        verbose_name=_('ИНН')
     )
     address = models.CharField(
         max_length=150,
         blank=False,
         null=False,
-        verbose_name='Адрес по прописке'
+        verbose_name=_('Адрес по прописке')
     )
     actual_place_of_residence = models.CharField(
         max_length=255,
         blank=False,
         null=False,
-        verbose_name='Фактическое место жительства'
+        verbose_name=_('Фактическое место жительства')
     )
     passport_series = models.CharField(
-        default='id',
+        default='ID',
         max_length=4,
         blank=False,
         null=False,
@@ -92,9 +76,13 @@ class Distributor(models.Model):
                                   verbose_name='Контактный номер'
                                   )
     contact2 = models.IntegerField(blank=True,
-                                  null=True,
-                                  verbose_name='Второй контактный номер'
-                                  )
+                                   null=True,
+                                   verbose_name='Второй контактный номер'
+                                   )
+    is_archived = models.BooleanField(
+        default=False,
+        verbose_name='В АРХИВ'
+    )
 
     def save(self, *args, **kwargs):
         # Проверка и форматирование основного номера телефона
@@ -111,17 +99,6 @@ class Distributor(models.Model):
                     phonenumbers.format_number(parsed_other_number, phonenumbers.PhoneNumberFormat.E164))
 
         super(Distributor, self).save(*args, **kwargs)
-    # )
-    # contact2 = models.IntegerField(
-    #     null=True,
-    #     blank=True,
-    #     verbose_name='Контактный номер два'
-    # )
-
-    is_archived = models.BooleanField(
-        default=False,
-        verbose_name='В АРХИВ'
-    )
 
     def __str__(self):
         return self.name
