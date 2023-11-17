@@ -16,8 +16,8 @@ THEME_PARTY_APPS = [
     'debug_toolbar',
     'corsheaders',
     'drf_yasg',
+    'axes',
     'django_filters',
-
 ]
 
 APPS = [
@@ -43,6 +43,14 @@ INSTALLED_APPS = [
     *THEME_PARTY_APPS,
     *APPS
 ]
+
+AUTHENTICATION_BACKENDS = [
+    'axes.backends.AxesBackend',
+    'axes.backends.AxesStandaloneBackend',
+    'django.contrib.auth.backends.ModelBackend',
+
+]
+
 # MIDDLEWARE
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
@@ -54,6 +62,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "axes.middleware.AxesMiddleware",
 ]
 
 ROOT_URLCONF = 'core.urls'
@@ -170,9 +179,9 @@ PASSWORD_HASHERS = [
 ]
 
 # попытки входа
-MAX_LOGIN_ATTEMPTS = 4
-LOCKOUT_DURATION = timezone.timedelta(minutes=2)  # Время блокировки (24 часа)
-
+AXES_FAILURE_LIMIT = 5  # Попытки входа
+AXES_LOCK_OUT_AT_FAILURE = True
+AXES_COOLOFF_TIME = timedelta(minutes=2) # Время блокировки (24 часа)
 
 from .cors import *
 

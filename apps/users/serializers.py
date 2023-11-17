@@ -35,7 +35,3 @@ class UserSerializer(serializers.Serializer):
         model = CustomUser
         fields = ['username', 'access', 'is_superuser', 'is_staff']
 
-class CustomUserSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = CustomUser
-        fields = ('username', 'is_superuser', 'is_staff')

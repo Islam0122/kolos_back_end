@@ -6,6 +6,7 @@ colorama==0.4.6
 debug==0.3.2
 decorator==5.1.1
 Django==4.2.6
+django-axes==6.1.1
 django-cors-headers==4.3.0
 django-debug-toolbar==4.2.0
 django-filter==23.3
