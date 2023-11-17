@@ -1,5 +1,6 @@
 from django.db import models
 from django.utils.translation import gettext_lazy as _
+import phonenumbers
 
 from . import choices
 
@@ -56,10 +57,12 @@ class Distributor(models.Model):
         null=False,
         verbose_name='Фактическое место жительства'
     )
-    passport_series = models.IntegerField(
+    passport_series = models.CharField(
+        default='id',
+        max_length=4,
         blank=False,
         null=False,
-        unique=True,
+        # unique=True,
         verbose_name='Серия паспорта'
     )
     passport_id = models.IntegerField(
@@ -84,16 +87,36 @@ class Distributor(models.Model):
         verbose_name='Срок действия'
     )
     # необходимо создать отдельную модель контакта со связью ForeignKey к модели Distributor
-    contact1 = models.IntegerField(
-        null=False,
-        blank=False,
-        verbose_name='Контактный номер один'
-    )
-    contact2 = models.IntegerField(
-        null=True,
-        blank=True,
-        verbose_name='Контактный номер два'
-    )
+    contact = models.IntegerField(blank=False,
+                                  null=False,
+                                  verbose_name='Контактный номер'
+                                  )
+    contact2 = models.IntegerField(blank=True,
+                                  null=True,
+                                  verbose_name='Второй контактный номер'
+                                  )
+
+    def save(self, *args, **kwargs):
+        # Проверка и форматирование основного номера телефона
+        if self.contact:
+            parsed_number = phonenumbers.parse(str(self.contact), "KG")
+            if phonenumbers.is_valid_number(parsed_number):
+                self.contact = int(phonenumbers.format_number(parsed_number, phonenumbers.PhoneNumberFormat.E164))
+
+        # Проверка и сохранение другого номера телефона
+        if self.contact2:
+            parsed_other_number = phonenumbers.parse(str(self.contact2), "KG")
+            if phonenumbers.is_valid_number(parsed_other_number):
+                self.contact2 = int(
+                    phonenumbers.format_number(parsed_other_number, phonenumbers.PhoneNumberFormat.E164))
+
+        super(Distributor, self).save(*args, **kwargs)
+    # )
+    # contact2 = models.IntegerField(
+    #     null=True,
+    #     blank=True,
+    #     verbose_name='Контактный номер два'
+    # )
 
     is_archived = models.BooleanField(
         default=False,
