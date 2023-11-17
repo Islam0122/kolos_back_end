@@ -17,7 +17,7 @@ class Category(models.TextChoices):
 
 class State(models.TextChoices):
     """Состояние товара"""
-    NORMAL = 'Normal', 'Норма'
-    INVALID = 'Invalid', 'Брак'
+    NORMAL = 'normal', 'Норма'
+    INVALID = 'defect', 'Брак'
 
 
