@@ -1,7 +1,7 @@
 from django.urls import path
-from .api import views
-# from .pdf_for_invoice import generate_pdf as _
-from .invoice_pdf import pdf_view as _
+from .api import views, pdf_view as _
+
+
 urlpatterns = [
     #order
     path('', views.InvoiceViewSet.as_view({'get': 'list',
