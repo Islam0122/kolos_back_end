@@ -3,9 +3,14 @@ from transaction import models as m
 
 
 class InvoiceSerializer(serializers.ModelSerializer):
+    total_price = serializers.SerializerMethodField()
+
     class Meta:
         model = m.Invoice
         fields = '__all__'
+
+    def get_total_price(self, obj):
+        return obj.total_price()
 
     def to_representation(self, instance):
         representation = super().to_representation(instance)
