@@ -13,6 +13,7 @@ urlpatterns = [
       path('api/v1/transactions/', include('transaction.urls')),
 
 
+
               ] + urls_swagger
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

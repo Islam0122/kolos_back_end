@@ -1,13 +1,12 @@
 import django_filters
 from product import models as prod_mod
 
+from django_filters import rest_framework as filters
+from product.models import Product, Category
+from rest_framework.filters import SearchFilter
 
-# class CharFilterInFilter(django_filters.rest_framework.BaseInFilter, django_filters.rest_framework.CharFilter):
-#     pass
-#
-#
-# class ProductFilter(django_filters.rest_framework.FilterSet):
-#
-#     class Meta:
-#         model = prod_mod.ProductItem
-#         fields = ['category',"state"]
+
+class ProductFilter(filters.FilterSet):
+    class Meta:
+        model = Product
+        fields = ['category', 'state']

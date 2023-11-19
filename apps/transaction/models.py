@@ -37,6 +37,6 @@ class Invoice(models.Model):
                 self.product.save()
                 super().save(*args, **kwargs)
             else:
-                raise ValueError(f"Недостаточно товара {self.product.name} на складе.")
+                raise ValueError(f"Недостаточно товара {self.product.product.name} на складе.")
         else:
             raise ValueError("Неверные данные для создания позиции заказа.")

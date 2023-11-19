@@ -1,12 +1,13 @@
 from rest_framework import status
+from rest_framework.filters import SearchFilter
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 from django.http import JsonResponse as json_resp
-from rest_framework import filters
 from django_filters.rest_framework import DjangoFilterBackend
 
-from product.models import Category, Product
-from .serializers import CategorySerializer, ProductItemSerializer, ProductTipSerializer
+from product import models as product_models
+from product.api import filters as product_filters
+from product.api import serializers as product_ser
 
 import seeder_beer as sd
 
@@ -16,19 +17,13 @@ def seeder_start(request):
     return json_resp({'status': 'success'})
 
 
-class CategoryViewSet(ModelViewSet):
-    queryset = Category.objects.all()
-    serializer_class = CategorySerializer
-    lookup_field = 'pk'
-
-
 class ProductItemViewSet(ModelViewSet):
-    queryset = Product.objects.filter(is_archived=False)
-    serializer_class = ProductItemSerializer
+    queryset = product_models.Product.objects.filter(is_archived=False)
+    serializer_class = product_ser.ProductItemSerializer
     lookup_field = 'pk'
-    filter_backends = [filters.SearchFilter, DjangoFilterBackend]
+    filter_backends = [SearchFilter, DjangoFilterBackend]
     search_fields = ['name', 'identification_number']
-    filterset_fields = ['category', 'state']
+    filterset_class = product_filters.ProductFilter
 
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()
@@ -39,9 +34,12 @@ class ProductItemViewSet(ModelViewSet):
 
 
 class ArchivedProductView(ModelViewSet):
-    queryset = Product.objects.filter(is_archived=True)
-    serializer_class = ProductItemSerializer
+    queryset = product_models.Product.objects.filter(is_archived=True)
+    serializer_class = product_ser.ProductItemSerializer
     lookup_field = 'pk'
+    filter_backends = [SearchFilter, DjangoFilterBackend]
+    search_fields = ['name', 'identification_number']
+    filterset_class = product_filters.ProductFilter
 
     # restore -> product
     def restore(self, request, *args, **kwargs):
@@ -53,6 +51,6 @@ class ArchivedProductView(ModelViewSet):
 
 
 class TipViewSet(ModelViewSet):
-    queryset = Product.objects.all()
-    serializer_class = ProductTipSerializer
+    queryset = product_models.Product.objects.all()
+    serializer_class = product_ser.ProductTipSerializer
     lookup_field = 'pk'
