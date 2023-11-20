@@ -2,6 +2,7 @@ from rest_framework import viewsets
 from ..models import Invoice, InvoiceItems
 from .serializers import InvoiceSerializer, InvoiceItemsSerializer
 from rest_framework.response import Response
+from rest_framework import generics
 
 
 class InvoiceViewSet(viewsets.ModelViewSet):
@@ -17,3 +18,12 @@ class InvoiceViewSet(viewsets.ModelViewSet):
         response_data['products_invoice'] = products_serializer.data
         return Response(response_data)
 
+
+class DistributorInvoiceItemsView(generics.ListAPIView):
+    serializer_class = InvoiceItemsSerializer
+
+    def get_queryset(self):
+        distributor_id = self.kwargs['distributor_id']
+        invoices = Invoice.objects.filter(distributor__id=distributor_id)
+        items = InvoiceItems.objects.filter(invoice__in=invoices)
+        return items
