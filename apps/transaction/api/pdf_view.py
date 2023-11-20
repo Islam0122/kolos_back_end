@@ -35,12 +35,13 @@ class GeneratePdf(APIView):
         invoice = get_object_or_404(Invoice, pk=pk)
 
         products_invoice_data = InvoiceItemsSerializer(instance=invoice.order_product.all(), many=True).data
-
+        total_amount = sum(item['total_price'] for item in products_invoice_data)
         params = {
             'invoice_data': {
                 'distributor': DistributorSerializer(invoice.distributor).data,
                 'created_at': invoice.created_at,
                 'products_invoice': products_invoice_data,
+                'total_amount': total_amount,
             }
         }
         print(params['invoice_data'])

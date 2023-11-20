@@ -50,7 +50,10 @@
             background-color: #f0f0f0;
             padding: 20px;
         }
-
+    tfoot {
+        background-color: #f2f2f2;
+        font-weight: bold;
+    }
     </style>
 </head>
 <body>
@@ -71,7 +74,7 @@
             <th>Единица измерения</th>
             <th>Количество</th>
             <th>Цена</th>
-            <th>Итого</th>
+            <th>Сумма</th>
         </tr>
     </thead>
     <tbody>
@@ -85,16 +88,17 @@
             </tr>
         {% endfor %}
     </tbody>
-</table>
-            {{ invoice_data.total_amount }}
-
-
     <tfoot>
         <tr>
             <td colspan="4" style="text-align: right;">Итого:</td>
-            <td>{{ invoice_data.total_amount }}</td>
+            <td id="totalAmount">{{ invoice_data.total_amount }}</td>
         </tr>
     </tfoot>
+
+</table>
+
+
+
 
     <div class="distributor-info">
         <h2>Информация о дистрибьюторе</h2>
