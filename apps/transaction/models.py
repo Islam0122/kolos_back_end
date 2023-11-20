@@ -1,19 +1,19 @@
 from django.core.validators import MinValueValidator
 from django.db import models
-from distributor.models import Distributor
-from product.models import Product
 
 
 class Invoice(models.Model):
     product = models.ForeignKey(
-        Product,
+        'product.Product',
         on_delete=models.CASCADE,
         related_name='product_invoice',
+        verbose_name='товар из накладной'
     )
     distributor = models.ForeignKey(
-        Distributor,
+        'distributor.Distributor',
         on_delete=models.CASCADE,
         related_name='distrib_invoice',
+        verbose_name='дистрибьютор'
     )
     quantity = models.PositiveIntegerField(
         default=1,
@@ -37,6 +37,6 @@ class Invoice(models.Model):
                 self.product.save()
                 super().save(*args, **kwargs)
             else:
-                raise ValueError(f"Недостаточно товара {self.product.product.name} на складе.")
+                raise ValueError(f"Недостаточно товара {self.product.name} на складе.")
         else:
             raise ValueError("Неверные данные для создания позиции заказа.")

@@ -11,6 +11,8 @@ class BaseModel(models.Model):
     updated_at = models.DateTimeField(
         _('обновленно в: '),
         auto_now=True,
+        null=True,
+        blank=True
     )
 
     class Meta:
