@@ -63,37 +63,38 @@
 
     <h1>Накладная</h1>
 
+
 <table>
     <thead>
         <tr>
             <th>Продукт</th>
-            <th>Количество</th>
             <th>Единица измерения</th>
+            <th>Количество</th>
             <th>Цена</th>
             <th>Итого</th>
         </tr>
     </thead>
     <tbody>
-{#        {% for invoice in response_data %}#}
-{#            {% for item in invoice.order_product.all %}#}
-{#                <tr>#}
-{#                    <td>{{ invoice_data.product.name }}</td>#}
-{#                    <td>{{ invoice_data.quantity }}</td>#}
-{#                    <td>{{ invoice_data.product.unit }}</td>#}
-{#                    <td>{{ invoice_dataproduct.price }}</td>#}
-{#                    <td>{{ invoice_data.total_price }}</td>#}
-{#                </tr>#}
-{#            {% endfor %}#}
-{#        {% endfor %}#}
+        {% for item in invoice_data.products_invoice %}
+            <tr>
+                <td>{{ item.product.name }}</td>
+                <td>{{ item.product.unit }}</td>
+                <td>{{ item.quantity }}</td>
+                <td>{{ item.product.price }}</td>
+                <td>{{ item.total_price }}</td>
+            </tr>
+        {% endfor %}
     </tbody>
 </table>
+            {{ invoice_data.total_amount }}
 
-{#          <tfoot>#}
-{#        <tr>#}
-{#            <td colspan="4">Итого:</td>#}
-{#            <td class="total-cell"></td>#}
-{#        </tr>#}
-{#    </tfoot>#}
+
+    <tfoot>
+        <tr>
+            <td colspan="4" style="text-align: right;">Итого:</td>
+            <td>{{ invoice_data.total_amount }}</td>
+        </tr>
+    </tfoot>
 
     <div class="distributor-info">
         <h2>Информация о дистрибьюторе</h2>

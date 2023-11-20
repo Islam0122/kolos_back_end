@@ -4,7 +4,8 @@ from django.template.loader import get_template
 from rest_framework.views import APIView
 from xhtml2pdf import pisa
 from core.settings.local import BASE_DIR
-from transaction.api.serializers import InvoiceSerializer
+from distributor.api.serializers import DistributorSerializer
+from transaction.api.serializers import InvoiceItemsSerializer
 from transaction.models import Invoice
 from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
@@ -32,11 +33,18 @@ def save_pdf(params: dict):
 class GeneratePdf(APIView):
     def get(self, request, pk):
         invoice = get_object_or_404(Invoice, pk=pk)
-        serializer = InvoiceSerializer(invoice)
+
+        products_invoice_data = InvoiceItemsSerializer(instance=invoice.order_product.all(), many=True).data
 
         params = {
-            'invoice_data': serializer.data
+            'invoice_data': {
+                'distributor': DistributorSerializer(invoice.distributor).data,
+                'created_at': invoice.created_at,
+                'products_invoice': products_invoice_data,
+            }
         }
+        print(params['invoice_data'])
+
         file_name, status = save_pdf(params)
 
         if not status:

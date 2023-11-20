@@ -44,9 +44,9 @@ class Invoice(models.Model):
         auto_now_add=True,
         verbose_name="Дата создания накладной")
 
-    # def total_price(self):
-    #     total_price = sum(item.total_price for item in self.items.all())
-    #     return total_price
+    def total_amount(self):
+        total_amount = sum(item.total_price() for item in self.order_product.all())
+        return total_amount
 
     def __str__(self):
         return f"Invoice {self.id} "
