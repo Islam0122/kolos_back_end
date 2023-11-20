@@ -50,7 +50,7 @@ class ArchivedProductView(ModelViewSet):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-class TipViewSet(ModelViewSet):
+class TypeViewSet(ModelViewSet):
     queryset = product_models.Product.objects.all()
-    serializer_class = product_ser.ProductTipSerializer
+    serializer_class = product_ser.ProductTypeSerializer
     lookup_field = 'pk'

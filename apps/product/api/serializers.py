@@ -21,7 +21,7 @@ class ProductItemSerializer(serializers.ModelSerializer):
                   'sum', 'state']
 
 
-class ProductTipSerializer(serializers.ModelSerializer):
+class ProductTypeSerializer(serializers.ModelSerializer):
     class Meta:
         model = m.Product
         fields = ('id', 'name')

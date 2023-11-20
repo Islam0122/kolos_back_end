@@ -49,7 +49,7 @@ products = ['Пиво', 'Соки', 'Вино', 'водка', 'безалког�
 
 
 def create_product():
-    Produc.objects.all().delete()
+    Product.objects.all().delete()
     for product in products:
         Product.objects.create(
             name=product,

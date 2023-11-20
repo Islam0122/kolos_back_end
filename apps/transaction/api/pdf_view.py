@@ -37,8 +37,6 @@ class GeneratePdf(APIView):
         params = {
             'invoice_data': serializer.data
         }
-        print(params)
-
         file_name, status = save_pdf(params)
 
         if not status:

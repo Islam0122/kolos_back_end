@@ -17,6 +17,6 @@ urlpatterns = [
                                                                  'put': 'update',
                                                                  'delete': 'restore'})),
 
-    path('tip/', views.TipViewSet.as_view({'get': 'list'}))
+    path('type/', views.TypeViewSet.as_view({'get': 'list'}))
 ]
 
