@@ -8,7 +8,7 @@ urlpatterns = [
     path('invoices/', _.InvoiceViewSet.as_view({'get': 'list', 'post': 'create'})),
     path('invoices/<int:pk>/', _.InvoiceViewSet.as_view({'get': 'retrieve'})),
     path('distributor/<int:distributor_id>/', _.DistributorInvoiceItemsView.as_view(),
-         name='distributor-invoice-items'),
+         name='distributor_invoice_items'),
 
     # path('archive/', views.ArchivedOrderView.as_view({'get': 'list'})),
     # path('archive/<int:pk>/', views.ArchivedOrderView.as_view({'get': 'retrieve',
