@@ -5,6 +5,11 @@ from rest_framework.response import Response
 from rest_framework import generics
 
 
+class InvoiceItemsViewSet(viewsets.ModelViewSet):
+    queryset = Invoice.objects.all()
+    serializer_class = InvoiceItemsSerializer
+
+
 class InvoiceViewSet(viewsets.ModelViewSet):
     queryset = Invoice.objects.all()
     serializer_class = InvoiceSerializer

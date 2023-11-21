@@ -1,7 +1,6 @@
 from rest_framework import serializers
 from ..models import Invoice, InvoiceItems
 from product.api.serializers import ProductItemSerializer
-from distributor.api.serializers import DistributorSerializer
 
 
 class InvoiceItemsSerializer(serializers.ModelSerializer):
@@ -17,11 +16,9 @@ class InvoiceItemsSerializer(serializers.ModelSerializer):
 
 
 class InvoiceSerializer(serializers.ModelSerializer):
-    distributor = DistributorSerializer()
     read_only_fields = ['id', 'created_at']
     products_invoice = InvoiceItemsSerializer(many=True, read_only=True)
 
     class Meta:
         model = Invoice
         fields = ['id', 'distributor', 'created_at', 'products_invoice']
-# , 'invoice_data'
