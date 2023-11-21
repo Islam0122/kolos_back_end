@@ -1,6 +1,6 @@
 from rest_framework import serializers
-from ..models import Invoice, InvoiceItems
 from product.api.serializers import ProductItemSerializer
+from ..models import Invoice, InvoiceItems
 
 
 class InvoiceItemsSerializer(serializers.ModelSerializer):
