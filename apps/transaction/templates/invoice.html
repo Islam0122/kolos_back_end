@@ -89,11 +89,11 @@
     <tbody>
         {% for item in invoice_data.products_invoice %}
             <tr>
-                <td>{{ item.product_name }}</td>
-                <td>{{ item.unit }}</td>
-                <td>{{ item.quantity }}</td>
-                <td>{{ item.product_price }}</td>
-                <td>{{ item.total_price }}</td>
+                <td>{% if item.product_name %}{{ item.product_name }}{% endif %}</td>
+                <td>{% if item.unit %}{{ item.unit }}{% endif %}</td>
+                <td>{% if item.quantity %}{{ item.quantity }}{% endif %}</td>
+                <td>{% if item.product_price %}{{ item.product_price }}{% endif %}</td>
+                <td>{% if item.total_price %}{{ item.total_price }}{% endif %}</td>
             </tr>
         {% endfor %}
     </tbody>
