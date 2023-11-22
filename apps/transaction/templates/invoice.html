@@ -18,7 +18,7 @@
             margin-bottom: 20px;
         }
         .id {
-            text-align: right;
+            text-align: left;
             margin-bottom: 20px;
         }
 
@@ -62,13 +62,13 @@
 </head>
 <body>
 
-    <div class="company-info">
-        <p>Номер накладной</p>
-        <h2>{{ invoice_data.identification_number }}</h2>
+    <div class="id">
+        <p>Номер накладной:</p>
+        <h2>{{ invoice_data.identification_number}}</h2>
 
     </div>
 
-    <div class="id-info">
+    <div class="company-info">
         <h2>ОсОО 'Пивоваренная компания KOLOS'</h2>
         <p>улица П. Тольятти, дом 8, Кара-Балта 722000</p>
         <p>Телефон: +996 312 357 182</p>
@@ -89,10 +89,10 @@
     <tbody>
         {% for item in invoice_data.products_invoice %}
             <tr>
-                <td>{{ item.product.name }}</td>
-                <td>{{ item.product.unit }}</td>
+                <td>{{ item.product_name }}</td>
+                <td>{{ item.unit }}</td>
                 <td>{{ item.quantity }}</td>
-                <td>{{ item.product.price }}</td>
+                <td>{{ item.product_price }}</td>
                 <td>{{ item.total_price }}</td>
             </tr>
         {% endfor %}

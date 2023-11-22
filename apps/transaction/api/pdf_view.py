@@ -1,3 +1,4 @@
+import os
 import uuid
 from io import BytesIO
 from django.template.loader import get_template
@@ -18,8 +19,9 @@ def save_pdf(params: dict):
     response = BytesIO()
     pdf = pisa.pisaDocument(BytesIO(html.encode('UTF-8')), response)
     file_name = uuid.uuid4()
+
     try:
-        with open(str(BASE_DIR) + f'/{file_name}.pdf', 'wb+') as output:
+        with open(str(BASE_DIR) + f'/media/{file_name}.pdf', 'wb+') as output:
             pdf = pisa.pisaDocument(BytesIO(html.encode('UTF-8')), output)
 
     except Exception as e:
@@ -38,6 +40,7 @@ class GeneratePdf(APIView):
         total_amount = sum(item['total_price'] for item in products_invoice_data)
         params = {
             'invoice_data': {
+                'identification_number': invoice.identification_number_invoice,
                 'distributor': DistributorSerializer(invoice.distributor).data,
                 'created_at': invoice.created_at,
                 'products_invoice': products_invoice_data,
@@ -51,4 +54,4 @@ class GeneratePdf(APIView):
         if not status:
             return Response({'status': 400})
 
-        return Response({'status': 200, 'sms': 'Successfully created'})
+        return Response({'status': 200, 'path': f'/media/{file_name}.pdf'})

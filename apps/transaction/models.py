@@ -34,7 +34,7 @@ class InvoiceItems(models.Model):
 
 class Invoice(models.Model):
 
-    identification_number = models.CharField(max_length=128, null=False, blank=False, verbose_name='Номер накладной')
+    identification_number_invoice = models.CharField(max_length=128, null=False, blank=False, verbose_name='Номер накладной')
     distributor = models.ForeignKey(
         'distributor.Distributor',
         on_delete=models.CASCADE,
