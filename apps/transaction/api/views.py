@@ -47,6 +47,4 @@ class DistributorInvoiceItemsView(generics.ListAPIView):
 
     def get_queryset(self):
         distributor_id = self.kwargs['distributor_id']
-        invoices = Invoice.objects.filter(distributor__id=distributor_id)
-        items = InvoiceItems.objects.filter(invoice__in=invoices)
-        return items
+        return InvoiceItems.objects.filter(invoice__distributor__id=distributor_id)
