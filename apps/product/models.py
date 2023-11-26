@@ -7,17 +7,18 @@ from common.models import BaseModel
 class Category(models.Model):
     title = models.CharField(
         _('Категория'),
-         max_length=40,
-         primary_key=True
-                             )
+        max_length=40,
+        primary_key=True
+    )
+
     def __str__(self):
         return f' {self.title}'
-
 
 
 class Product(BaseModel):
     name = models.CharField(
         _('Наименование'),
+        unique=True,
         max_length=120
     )
     category = models.ForeignKey(
@@ -28,7 +29,8 @@ class Product(BaseModel):
     )
     identification_number = models.CharField(
         _('ID'),
-        max_length=100,
+        unique=True,
+        max_length=200,
 
     )
     unit = models.CharField(
@@ -42,12 +44,12 @@ class Product(BaseModel):
         _('Кол-во'),
         default=1
     )
-    price =models.IntegerField(
+    price = models.IntegerField(
         _('Цена'),
     )
     sum = models.IntegerField(
         _('Сумма'),
-        default= 0
+        default=0
     )
     state = models.CharField(
         _('Состояние'),
@@ -63,7 +65,6 @@ class Product(BaseModel):
 
     def __str__(self):
         return f'наименование: {self.name}, кол-во: {self.quantity}'
-
 
     def save(self, *args, **kwargs):
         self.sum = self.quantity * self.price
