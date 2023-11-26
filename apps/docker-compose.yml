@@ -1,0 +1,18 @@
+version: '3'
+
+services:
+  backend:
+    build:
+      context: .
+    container_name: backend-kolos
+    environment:
+      DJANGO_SUPERUSER_USERNAME: ${SUPERUSER_USERNAME}
+      DJANGO_SUPERUSER_PASSWORD: ${SUPERUSER_PASSWORD}
+    command: >
+      sh -c "
+      python manage.py makemigrations &&
+      python manage.py migrate &&
+      python manage.py createsuperuser --noinput &&
+      python manage.py runserver 0.0.0.0:8004"
+    ports:
+      - "83:8004"
