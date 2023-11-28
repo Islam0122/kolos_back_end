@@ -30,12 +30,16 @@ class InvoiceViewSet(viewsets.ModelViewSet):
 
     def create(self, request, *args, **kwargs):
         products_invoice_data = request.data.pop('products_invoice', None)
+        is_return = request.data.pop('is_return', False)
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
         instance = serializer.save()
         if products_invoice_data:
             for product_data in products_invoice_data:
+                # проверка на возврат
+                if is_return:
+                    product_data['returned'] = True
                 InvoiceItems.objects.create(invoice=instance, **product_data)
 
         headers = self.get_success_headers(serializer.data)
@@ -47,4 +51,15 @@ class DistributorInvoiceItemsView(generics.ListAPIView):
 
     def get_queryset(self):
         distributor_id = self.kwargs['distributor_id']
-        return InvoiceItems.objects.filter(invoice__distributor__id=distributor_id)
+
+        start_date = self.request.query_params.get('start_date', None)
+        end_date = self.request.query_params.get('end_date', None)
+
+        queryset = InvoiceItems.objects.filter(invoice__distributor__id=distributor_id)
+
+        if start_date and end_date:
+            queryset = queryset.filter(date_of_sale__range=[start_date, end_date])
+
+        return queryset
+
+

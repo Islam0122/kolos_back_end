@@ -9,10 +9,12 @@ class InvoiceItemsSerializer(serializers.ModelSerializer):
     product_price = serializers.SerializerMethodField()
     total_price = serializers.SerializerMethodField()
     created_at = serializers.SerializerMethodField()
+    returned = serializers.BooleanField(required=False)
 
     class Meta:
         model = InvoiceItems
-        fields = ['id', 'product_name', 'identification_number', 'unit', 'product_price',  'quantity', 'created_at', 'total_price']
+        fields = ['id', 'product_name', 'identification_number', 'unit', 'product_price', 'quantity',
+                  'created_at', 'total_price', 'returned']
 
     def get_identification_number(self, obj):
         return obj.product.identification_number
@@ -39,4 +41,9 @@ class InvoiceSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Invoice
-        fields = ['id', 'distributor', 'created_at', 'products_invoice', 'identification_number_invoice']
+        fields = ['id', 'distributor', 'created_at', 'products_invoice', 'identification_number_invoice', 'returned']
+
+    returned = serializers.SerializerMethodField()
+
+    def get_returned(self, obj):
+        return any(item.returned for item in obj.order_product.all())

@@ -3,33 +3,29 @@ from django.db import models
 
 
 class InvoiceItems(models.Model):
-
-    product = models.ForeignKey('product.Product',
-                                max_length=200,
-                                verbose_name='Товар из накладной',
-                                on_delete=models.CASCADE,
-                                )
-    quantity = models.PositiveIntegerField(
-        default=1,
-        validators=[MinValueValidator(1)],
-        verbose_name='Количество'
-    )
-    invoice = models.ForeignKey('transaction.Invoice', related_name='order_product', on_delete=models.CASCADE,
-                                verbose_name='Накладная')
+    product = models.ForeignKey('product.Product', max_length=200, verbose_name='Товар из накладной', on_delete=models.CASCADE)
+    quantity = models.PositiveIntegerField(default=1, validators=[MinValueValidator(1)], verbose_name='Количество')
+    invoice = models.ForeignKey('transaction.Invoice', related_name='order_product', on_delete=models.CASCADE, verbose_name='Накладная')
+    returned = models.BooleanField(default=False, verbose_name='Возвращено')
 
     def save(self, *args, **kwargs):
         if self.product and self.quantity > 0:
-            if self.product.quantity >= self.quantity:
-                self.product.quantity -= self.quantity
+            if self.returned:
+                self.product.quantity += self.quantity  # Увеличиваем количество товара на складе при возврате
                 self.product.save()
-                super().save(*args, **kwargs)
+            elif self.product.quantity >= self.quantity:
+                self.product.quantity -= self.quantity   # уменьшаем при отпуске
+                self.product.save()
             else:
                 raise ValueError(f"Недостаточно товара {self.product.name} на складе.")
+
+            super().save(*args, **kwargs)
         else:
             raise ValueError("Неверные данные для создания позиции заказа.")
 
     def total_price(self):
         return self.product.price * self.quantity
+
 
 
 class Invoice(models.Model):

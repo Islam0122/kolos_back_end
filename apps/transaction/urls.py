@@ -15,7 +15,7 @@ urlpatterns = [
         'get': 'retrieve'
     }), name='invoices'),
 
-    # генерация pdf конкретной продажи по id продажи
+    # генерация pdf конкретной продажи по id накладной
     path('generate_pdf/<int:pk>/', GeneratePdf.as_view(), name='generate_pdf'),
 
     # список всех продуктов проданных дистрибутору по его id
@@ -23,8 +23,6 @@ urlpatterns = [
          name='distributor_invoice_items'),
 
 
-
-    # path('invoice/', InvoiceViewSet.as_view(), name='invoice-list'),
     # path('invoice_items/', InvoiceItemsViewSet.as_view(), name='invoice-items-list'),
     # path('invoice_items/<int:pk>/', InvoiceItemsViewSetDet.as_view(), name='invoice-items-detail'),
      ]
