@@ -1,35 +1,36 @@
-import os
-import uuid
-from io import BytesIO
-from django.template.loader import get_template
 from rest_framework.views import APIView
-from xhtml2pdf import pisa
-from core.settings.local import BASE_DIR
 from distributor.api.serializers import DistributorSerializer
 from transaction.api.serializers import InvoiceItemsSerializer
 from transaction.models import Invoice
-from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
+from rest_framework.response import Response
+from django.http import HttpResponse, HttpResponseServerError
+from django.template.loader import get_template
+from xhtml2pdf import pisa
+from io import BytesIO
 
 
 def save_pdf(params: dict):
-
-    template = get_template('invoice.html')
-    html = template.render(params)
-    response = BytesIO()
-    pdf = pisa.pisaDocument(BytesIO(html.encode('UTF-8')), response)
-    file_name = uuid.uuid4()
-
     try:
-        with open(str(BASE_DIR) + f'/media/{file_name}.pdf', 'wb+') as output:
-            pdf = pisa.pisaDocument(BytesIO(html.encode('UTF-8')), output)
+        template = get_template('invoice.html')
+        html = template.render(params)
+
+        pdf_bytes = BytesIO()
+
+        pdf = pisa.pisaDocument(BytesIO(html.encode('UTF-8')), pdf_bytes)
+
+        if pdf.err:
+            raise Exception(f'Error during PDF generation: {pdf.err}')
+
+        pdf_bytes.seek(0)
+
+        response = HttpResponse(pdf_bytes, content_type='application/pdf')
+        response['Content-Disposition'] = 'attachment; filename="invoice.pdf"'
+
+        return response
 
     except Exception as e:
-        print(e)
-
-    if pdf.err:
-        return f'Error during PDF generation: {pdf.err}', False
-    return file_name, True
+        return HttpResponseServerError(f'Internal Server Error: {str(e)}')
 
 
 class GeneratePdf(APIView):
@@ -47,11 +48,10 @@ class GeneratePdf(APIView):
                 'total_amount': total_amount,
             }
         }
-        print(params['invoice_data'])
 
-        file_name, status = save_pdf(params)
+        response = save_pdf(params)
 
-        if not status:
-            return Response({'status': 400})
-
-        return Response({'status': 200, 'path': f'/media/{file_name}.pdf'})
+        if response.status_code == 200:
+            return response
+        else:
+            return Response({'status': response.status_code})
