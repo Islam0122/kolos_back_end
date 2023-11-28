@@ -6,5 +6,5 @@ class DistributorSerializer(serializers.ModelSerializer):
     class Meta:
         model = Distributor
         fields = ['id', 'photo', 'name', 'region', 'inn', 'address',
-                  'actual_place_of_residence', 'passport_series', 'passport_id',
+                  'actual_place_of_residence', 'passport_series_number',
                   'issued_by', 'issue_date', 'validity', 'contact', 'contact2']
