@@ -1,8 +1,9 @@
-from rest_framework import viewsets, status
-from ..models import Invoice, InvoiceItems
-from .serializers import InvoiceSerializer, InvoiceItemsSerializer
-from rest_framework.response import Response
+from ..models import Invoice, InvoiceItems, ReturnInvoice, ReturnInvoiceItems
+from .serializers import InvoiceSerializer, InvoiceItemsSerializer, ReturnInvoiceSerializer,\
+    ReturnInvoiceItemsSerializer
 from rest_framework import generics
+from rest_framework import viewsets, status
+from rest_framework.response import Response
 
 
 class InvoiceItemsViewSet(generics.ListCreateAPIView):
@@ -30,22 +31,46 @@ class InvoiceViewSet(viewsets.ModelViewSet):
 
     def create(self, request, *args, **kwargs):
         products_invoice_data = request.data.pop('products_invoice', None)
-        is_return = request.data.pop('is_return', False)
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
         instance = serializer.save()
         if products_invoice_data:
             for product_data in products_invoice_data:
-                # проверка на возврат
-                if is_return:
-                    product_data['returned'] = True
                 InvoiceItems.objects.create(invoice=instance, **product_data)
 
         headers = self.get_success_headers(serializer.data)
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
 
+class ReturnInvoiceViewSet(viewsets.ModelViewSet):
+    queryset = ReturnInvoice.objects.all()
+    serializer_class = ReturnInvoiceSerializer
+
+    def retrieve(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = self.get_serializer(instance)
+        products = ReturnInvoiceItems.objects.filter(return_invoice=instance)
+        products_serializer = ReturnInvoiceItemsSerializer(products, many=True)
+        response_data = serializer.data
+        response_data['products_return_invoice'] = products_serializer.data
+        return Response(response_data)
+
+    def create(self, request, *args, **kwargs):
+        return_invoice_items_data = request.data.pop('return_product', None)
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        instance = serializer.save()
+        if return_invoice_items_data:
+            for return_product_data in return_invoice_items_data:
+                ReturnInvoiceItems.objects.create(return_invoice=instance, **return_product_data)
+
+        headers = self.get_success_headers(serializer.data)
+        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+
+
+#список купленных товаров передаваемого ДИСТ
 class DistributorInvoiceItemsView(generics.ListAPIView):
     serializer_class = InvoiceItemsSerializer
 
@@ -58,6 +83,16 @@ class DistributorInvoiceItemsView(generics.ListAPIView):
         queryset = InvoiceItems.objects.filter(invoice__distributor__id=distributor_id)
 
         if start_date and end_date:
-            queryset = queryset.filter(date_of_sale__range=[start_date, end_date])
+            queryset = queryset.filter(invoice__sale_date__range=[start_date, end_date])
 
+        return queryset
+
+
+#список возвращенных товаров передаваемого ДИСТ
+class ReturnInvoiceListByDistributor(generics.ListAPIView):
+    serializer_class = ReturnInvoiceItemsSerializer
+
+    def get_queryset(self):
+        distributor_id = self.kwargs['distributor_id']
+        queryset = ReturnInvoiceItems.objects.filter(return_invoice__distributor__id=distributor_id)
         return queryset

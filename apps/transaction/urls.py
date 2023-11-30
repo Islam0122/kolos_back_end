@@ -1,7 +1,6 @@
 from django.urls import path
 from .api import views as _
-from .api.pdf_view import GeneratePdf
-
+from .api.pdf_view import GeneratePdf, GenerateReturnPdf
 
 urlpatterns = [
     # продажа товара и список всех продаж
@@ -21,6 +20,27 @@ urlpatterns = [
     # список всех продуктов проданных дистрибутору по его id
     path('distributor/<int:distributor_id>/', _.DistributorInvoiceItemsView.as_view(),
          name='distributor_invoice_items'),
+
+#ВОЗВРАТ
+
+
+    # возврат товара и список всех продаж
+    path('return_invoices/', _.ReturnInvoiceViewSet.as_view({
+        'get': 'list',
+        'post': 'create'
+    }), name='return-invoices'),
+
+    # детальный обзор продажи
+    path('return_invoices/<int:pk>/', _.ReturnInvoiceViewSet.as_view({
+        'get': 'retrieve'
+    }), name='invoices'),
+
+    # список всех возвратных продуктов дистрибутору по его id
+    path('return/distributor/<int:distributor_id>/', _.ReturnInvoiceListByDistributor.as_view(),
+         name='distributor_return_invoice_items'),
+
+    # генерация pdf конкретного возврата по id накладной
+    path('generate_return_pdf/<int:pk>/', GenerateReturnPdf.as_view(), name='generate_return_pdf'),
 
 
     # path('invoice_items/', InvoiceItemsViewSet.as_view(), name='invoice-items-list'),
