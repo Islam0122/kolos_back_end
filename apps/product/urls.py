@@ -2,7 +2,6 @@ from django.urls import path
 from .api import views
 
 urlpatterns = [
-    path('db_seed/', views.seeder_start),
 
     path('', views.ProductItemViewSet.as_view({
         'get': 'list', 'post': 'create'
@@ -12,6 +11,17 @@ urlpatterns = [
         'get': 'retrieve', 'put': 'update', 'patch': 'partial_update', 'delete': 'destroy'
     })),
 
+    path('defect/', views.ProducDefecttItemViewSet.as_view({
+        'get': 'list', 'post': 'create'
+    })),
+
+    path('defect/<int:pk>/', views.ProducDefecttItemViewSet.as_view({
+        'get': 'retrieve', 'put': 'update', 'patch': 'partial_update', 'delete': 'destroy'
+    })),
+
+    path('change-state-and-move/<int:pk>/', views.ChangeStateAndMoveView.as_view(), name='change-state-and-move'),
+
+
     path('archive/', views.ArchivedProductView.as_view({
         'get': 'list'
     })),
@@ -20,7 +30,7 @@ urlpatterns = [
         'get': 'retrieve', 'put': 'update', 'delete': 'restore'
     })),
 
-    path('type/', views.TypeViewSet.as_view({
-        'get': 'list'
-    }))
+    # product-> search
+    path('search/', views.Search.as_view()),
+
 ]
