@@ -61,5 +61,3 @@ class DistributorInvoiceItemsView(generics.ListAPIView):
             queryset = queryset.filter(date_of_sale__range=[start_date, end_date])
 
         return queryset
-
-
