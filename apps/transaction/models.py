@@ -3,6 +3,28 @@ from django.db import models
 from django.utils.translation import gettext_lazy as _
 
 
+class Invoice(models.Model):
+
+    identification_number_invoice = models.CharField(max_length=128, null=False, blank=False, verbose_name='Номер накладной продажи')
+    distributor = models.ForeignKey(
+        'distributor.Distributor',
+        on_delete=models.CASCADE,
+        related_name='distrib_invoice',
+        verbose_name='дистрибьютор'
+    )
+    created_at = models.DateTimeField(
+        auto_now_add=True,
+        verbose_name="Дата создания накладной продажи")
+
+    def __str__(self):
+        return f"Продажа {self.id} "
+
+    class Meta:
+        verbose_name = _('Продажа')
+        verbose_name_plural = _('Продажи')
+
+
+
 class InvoiceItems(models.Model):
     product = models.ForeignKey('product.ProductNormal', max_length=200, verbose_name='Товар из накладной', on_delete=models.CASCADE)
     quantity = models.PositiveIntegerField(default=1, validators=[MinValueValidator(1)], verbose_name='Количество')
@@ -35,27 +57,6 @@ class InvoiceItems(models.Model):
         verbose_name = _('Проданная позиция')
         verbose_name_plural = _('Проданные позиции')
 
-
-
-class Invoice(models.Model):
-
-    identification_number_invoice = models.CharField(max_length=128, null=False, blank=False, verbose_name='Номер накладной продажи')
-    distributor = models.ForeignKey(
-        'distributor.Distributor',
-        on_delete=models.CASCADE,
-        related_name='distrib_invoice',
-        verbose_name='дистрибьютор'
-    )
-    created_at = models.DateTimeField(
-        auto_now_add=True,
-        verbose_name="Дата создания накладной продажи")
-
-    def __str__(self):
-        return f"Продажа {self.id} "
-
-    class Meta:
-        verbose_name = _('Продажа')
-        verbose_name_plural = _('Продажи')
 
 class ReturnInvoice(models.Model):
     identification_number_invoice = models.CharField(max_length=128, null=False, blank=False,
