@@ -29,27 +29,31 @@
     h1 {
         text-align: center;
     }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
 
-    table {
-        width: 100%;
-        border-collapse: collapse;
-        margin-top: 20px;
-    }
+        th, td {
+            border: 2px solid #333;
+            text-align: center;
+            padding: 8px;
+            word-wrap: break-word;
+            max-width: 100px;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+        }
 
-    th, td {
-        border: 1px solid #dddddd;
-        text-align: center;  /* Добавленный стиль для центрирования текста */
-        padding: 8px;
-        word-wrap: break-word;
-        max-width: 100px;
-        overflow: hidden;
-        /* Убрано свойство white-space: nowrap; */
-        text-overflow: ellipsis;
-    }
+        th {
+            background-color: #f2f2f2;
+        }
 
-    th {
-        background-color: #f2f2f2;
-    }
+        td:first-child {
+            min-width: 10px;
+            max-width: 40px;
+        }
 
         .signatures {
             display: flex;
@@ -106,7 +110,7 @@
     </tbody>
     <tfoot>
         <tr>
-            <td colspan="4" style="text-align: right;">Итого:</td>
+            <td colspan="5" style="text-align: right;">Итого:</td>
             <td id="totalAmount">{{ invoice_data.total_amount }}</td>
         </tr>
     </tfoot>
@@ -117,7 +121,7 @@
 
 
     <div class="distributor-info">
-        <h2>Информация о дистрибьюторе</h2>
+        <h2>Информация о дистрибьюторе: </h2>
         <p>Имя: {{ invoice_data.distributor.name }}</p>
         <p>Контакт: {{ invoice_data.distributor.contact }}</p>
     </div>

@@ -58,9 +58,10 @@ class InvoiceItems(models.Model):
     def total_price(self):
         return self.product.price * self.quantity
 
-
     def __str__(self):
         return f"позиция: {self.product.name} "
+
+
     class Meta:
         verbose_name = _('Проданная позиция')
         verbose_name_plural = _('Проданные позиции')

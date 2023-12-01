@@ -28,27 +28,32 @@
         h1 {
             text-align: center;
         }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
 
-    table {
-        width: 100%;
-        border-collapse: collapse;
-        margin-top: 20px;
-    }
+        th, td {
+            border: 2px solid #333;
+            text-align: center;
+            padding: 8px;
+            word-wrap: break-word;
+            max-width: 100px;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+        }
 
-    th, td {
-        border: 1px solid #dddddd;
-        text-align: center;  /* Добавленный стиль для центрирования текста */
-        padding: 8px;
-        word-wrap: break-word;
-        max-width: 100px;
-        overflow: hidden;
-        /* Убрано свойство white-space: nowrap; */
-        text-overflow: ellipsis;
-    }
+        th {
+            background-color: #f2f2f2;
+        }
 
-    th {
-        background-color: #f2f2f2;
-    }
+        td:first-child {
+            min-width: 10px;
+            max-width: 40px;
+        }
+
 
         .signatures {
             display: flex;
@@ -92,8 +97,8 @@
             <th>Единица измерения</th>
             <th>Количество</th>
             <th>Цена</th>
-            <th>Сумма</th>
             <th>Состояние</th>
+            <th>Сумма</th>
 
         </tr>
     </thead>
@@ -104,15 +109,15 @@
                 <td>{% if item.unit %}{{ item.unit }}{% endif %}</td>
                 <td>{% if item.quantity %}{{ item.quantity }}{% endif %}</td>
                 <td>{% if item.price %}{{ item.price }}{% endif %}</td>
-                <td>{% if item.total_price %}{{ item.total_price }}{% endif %}</td>
                 <td>{% if item.state %}{{ item.state }}{% endif %}</td>
+                <td>{% if item.total_price %}{{ item.total_price }}{% endif %}</td>
 
             </tr>
         {% endfor %}
     </tbody>
     <tfoot>
         <tr>
-            <td colspan="4" style="text-align: right;">Итого:</td>
+            <td colspan="5" style="text-align: right;">Итого:</td>
             <td id="totalAmount">{{ return_invoice_data.total_amount }}</td>
         </tr>
     </tfoot>
@@ -123,7 +128,7 @@
 
 
     <div class="distributor-info">
-        <h2>Информация о дистрибьюторе</h2>
+        <h2>Информация о дистрибьюторе:</h2>
         <p>Имя: {{ return_invoice_data.distributor.name }}</p>
         <p>Контакт: {{ return_invoice_data.distributor.contact }}</p>
     </div>
