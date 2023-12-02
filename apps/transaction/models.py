@@ -105,52 +105,52 @@ class ReturnInvoiceItems(models.Model):
         on_delete=models.CASCADE,
         verbose_name='Товар из накладной продажи'
     )
+    def create_or_update_defect_item(self, product_normal):
+        defect_item, created = ProductDefect.objects.get_or_create(
+            identification_number=product_normal.identification_number,
+            defaults={
+                'name': product_normal.name,
+                'category': product_normal.category,
+                'unit': product_normal.unit,
+                'quantity': self.quantity,
+                'price': product_normal.price,
+                'state': self.state
+            }
+        )
+
+        if not created:
+            defect_item.quantity += self.quantity
+            defect_item.save()
 
     def save(self, *args, **kwargs):
         with transaction.atomic():
             product_normal = self.invoice_item.product
 
             if self.state == choices.State.DEFECT:
-                # Бракованный склад
-                defect_items = ProductDefect.objects.filter(identification_number=product_normal.identification_number)
-
-                if defect_items.exists():
-                    defect_item = defect_items.first()
-                    defect_item.quantity += self.quantity
-                    defect_item.save()
-                else:
-                    # Если товара нет на бракованном складе, создаем новый
-                    ProductDefect.objects.create(
-                        name=product_normal.name,
-                        category=product_normal.category,
-                        identification_number=product_normal.identification_number,
-                        unit=product_normal.unit,
-                        quantity=self.quantity,
-                        price=product_normal.price,
-                        state=self.state
-                    )
+                self.create_or_update_defect_item(product_normal)
             else:
                 # Нормальный склад
-                normal_items = ProductNormal.objects.filter(identification_number=product_normal.identification_number)
+                normal_item, created = ProductNormal.objects.get_or_create(
+                    identification_number=product_normal.identification_number,
+                    defaults={
+                        'name': product_normal.name,
+                        'category': product_normal.category,
+                        'unit': product_normal.unit,
+                        'quantity': self.quantity,
+                        'price': product_normal.price,
+                        'state': self.state
+                    }
+                )
 
-                defect_items = ProductDefect.objects.filter(identification_number=product_normal.identification_number)
+                if not created:
+                    normal_item.quantity -= self.quantity  # Уменьшаем количество на основном складе
+                    if normal_item.quantity <= 0:
+                        normal_item.save()
+                    else:
+                        normal_item.save()
 
-                if defect_items.exists():
-                    defect_item = defect_items.first()
-                    defect_item.quantity += self.quantity
-                    defect_item.save()
-                else:
-                    # Если товара нет на бракованном складе, создаем новый
-                    ProductDefect.objects.create(
-                        name=product_normal.name,
-                        category=product_normal.category,
-                        identification_number=product_normal.identification_number,
-                        unit=product_normal.unit,
-                        quantity=self.quantity,
-                        price=product_normal.price,
-                        state=self.state
-                    )
             super().save(*args, **kwargs)
+
     def total_price(self):
         return self.invoice_item.product.price * self.quantity
 
