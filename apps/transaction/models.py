@@ -1,5 +1,5 @@
 from django.core.validators import MinValueValidator
-from django.db import models
+from django.db import models, transaction
 from django.utils.translation import gettext_lazy as _
 from product import choices
 from product.models import ProductNormal, ProductDefect
@@ -68,10 +68,6 @@ class InvoiceItems(models.Model):
 
 
 class ReturnInvoice(models.Model):
-    identification_number_return = models.CharField(
-        max_length=128,
-        null=False, blank=False,
-        verbose_name='Номер накладной возврата')
     distributor = models.ForeignKey(
         'distributor.Distributor',
         on_delete=models.CASCADE,
@@ -82,16 +78,12 @@ class ReturnInvoice(models.Model):
         auto_now_add=True,
         verbose_name="Дата создания накладной возврата")
 
+
     def __str__(self):
         return f"Возврат {self.id} "
 
 
 class ReturnInvoiceItems(models.Model):
-    product = models.ForeignKey(
-        'product.ProductNormal',
-        max_length=200,
-        verbose_name='Товар из накладной возврата',
-        on_delete=models.CASCADE)
     quantity = models.PositiveIntegerField(
         default=1,
         validators=[MinValueValidator(1)],
@@ -108,56 +100,63 @@ class ReturnInvoiceItems(models.Model):
         on_delete=models.CASCADE,
         verbose_name='Накладная возврата')
 
+    invoice_item = models.ForeignKey(
+        'transaction.InvoiceItems',
+        on_delete=models.CASCADE,
+        verbose_name='Товар из накладной продажи'
+    )
+
     def save(self, *args, **kwargs):
-        # Получаем ProductNormal, к которому относится возвращаемый товар
-        product_normal = self.product
+        with transaction.atomic():
+            product_normal = self.invoice_item.product
 
-        if self.state == choices.State.DEFECT:
-            print('zzzz')
-            # Бракованный склад
-            defect_items = ProductDefect.objects.filter(identification_number=product_normal.identification_number)
+            if self.state == choices.State.DEFECT:
+                # Бракованный склад
+                defect_items = ProductDefect.objects.filter(identification_number=product_normal.identification_number)
 
-            if defect_items.exists():
-                defect_item = defect_items.first()
-                defect_item.quantity += self.quantity
-                defect_item.save()
+                if defect_items.exists():
+                    defect_item = defect_items.first()
+                    defect_item.quantity += self.quantity
+                    defect_item.save()
+                else:
+                    # Если товара нет на бракованном складе, создаем новый
+                    ProductDefect.objects.create(
+                        name=product_normal.name,
+                        category=product_normal.category,
+                        identification_number=product_normal.identification_number,
+                        unit=product_normal.unit,
+                        quantity=self.quantity,
+                        price=product_normal.price,
+                        state=self.state
+                    )
             else:
-                # Если товара нет на бракованном складе, создаем новый
-                ProductDefect.objects.create(
-                    name=product_normal.name,
-                    category=product_normal.category,
-                    identification_number=product_normal.identification_number,
-                    unit=product_normal.unit,
-                    quantity=self.quantity,
-                    price=product_normal.price,
-                    state=self.state
-                )
-        else:
-            # Нормальный склад
-            normal_items = ProductNormal.objects.filter(identification_number=product_normal.identification_number)
+                # Нормальный склад
+                normal_items = ProductNormal.objects.filter(identification_number=product_normal.identification_number)
 
-            if normal_items.exists():
-                normal_item = normal_items.first()
-                normal_item.quantity += self.quantity
-                normal_item.save()
-            else:
-                # Если товара нет на нормальном складе, создаем новый
-                ProductNormal.objects.create(
-                    name=product_normal.name,
-                    category=product_normal.category,
-                    identification_number=product_normal.identification_number,
-                    unit=product_normal.unit,
-                    quantity=self.quantity,
-                    price=product_normal.price,
-                    state=self.state
-                )
+                defect_items = ProductDefect.objects.filter(identification_number=product_normal.identification_number)
 
-        super().save(*args, **kwargs)
+                if defect_items.exists():
+                    defect_item = defect_items.first()
+                    defect_item.quantity += self.quantity
+                    defect_item.save()
+                else:
+                    # Если товара нет на бракованном складе, создаем новый
+                    ProductDefect.objects.create(
+                        name=product_normal.name,
+                        category=product_normal.category,
+                        identification_number=product_normal.identification_number,
+                        unit=product_normal.unit,
+                        quantity=self.quantity,
+                        price=product_normal.price,
+                        state=self.state
+                    )
+            super().save(*args, **kwargs)
     def total_price(self):
-        return self.product.price * self.quantity
+        return self.invoice_item.product.price * self.quantity
 
     def __str__(self):
-        return f"Возвращенная позиция: {self.product.name} "
+        return f"Возвращенная позиция: {self.invoice_item.product.name} "
+
     class Meta:
         verbose_name = _('Возвращенная  позиция')
         verbose_name_plural = _('Возвращенные позиции')

@@ -58,23 +58,23 @@ class ReturnInvoiceItemsSerializer(serializers.ModelSerializer):
                    'total_price', 'return_date', 'sale_date', 'state']
 
     def get_identification_number(self, obj):
-        return obj.product.identification_number
+        return obj.invoice_item.product.identification_number
 
     def get_name(self, obj):
-        return obj.product.name
+        return obj.invoice_item.product.name
 
     def get_unit(self, obj):
-        return obj.product.unit
+        return obj.invoice_item.product.unit
 
     def get_price(self, obj):
-        return obj.product.price
+        return obj.invoice_item.product.price
 
     def get_return_date(self, obj):
         return obj.return_invoice.return_date
 
     def get_sale_date(self, obj):
         try:
-            sale_date = obj.product.invoiceitems_set.first().invoice.sale_date
+            sale_date = obj.invoice_item.invoiceitems_set.first().invoice.sale_date
             return sale_date
         except AttributeError:
             return None
@@ -90,7 +90,7 @@ class ReturnInvoiceSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = ReturnInvoice
-        fields = ['id', 'distributor', 'return_date', 'products_return_invoice', 'identification_number_return']
+        fields = ['id', 'distributor', 'return_date', 'products_return_invoice']
 
 
 

@@ -1,3 +1,4 @@
+from django.db import transaction
 from ..models import Invoice, InvoiceItems, ReturnInvoice, ReturnInvoiceItems
 from .serializers import InvoiceSerializer, InvoiceItemsSerializer, ReturnInvoiceSerializer,\
     ReturnInvoiceItemsSerializer
@@ -61,13 +62,24 @@ class ReturnInvoiceViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
-        instance = serializer.save()
-        if return_invoice_items_data:
-            for return_product_data in return_invoice_items_data:
-                ReturnInvoiceItems.objects.create(return_invoice=instance, **return_product_data)
+        with transaction.atomic():
+            instance = serializer.save()
 
-        headers = self.get_success_headers(serializer.data)
-        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+            for return_product_data in return_invoice_items_data or []:
+                # Создаем объект ReturnInvoiceItems и сохраняем его
+                return_item = ReturnInvoiceItems.objects.create(return_invoice=instance, **return_product_data)
+
+                # Проверяем, существует ли связанный объект invoice_item
+                if return_item.invoice_item:
+                    invoice_item = return_item.invoice_item
+                    invoice_item.quantity -= return_item.quantity
+                    invoice_item.save()
+                    if invoice_item.quantity == 0:
+                        # Удаляем invoice_item, так как товар вернули полностью
+                        invoice_item.delete()
+
+            headers = self.get_success_headers(serializer.data)
+            return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
 
 #список купленных товаров передаваемого ДИСТ
@@ -89,6 +101,7 @@ class DistributorInvoiceItemsView(generics.ListAPIView):
 
 
 #список возвращенных товаров передаваемого ДИСТ
+
 class ReturnInvoiceListByDistributor(generics.ListAPIView):
     serializer_class = ReturnInvoiceItemsSerializer
 
@@ -96,3 +109,21 @@ class ReturnInvoiceListByDistributor(generics.ListAPIView):
         distributor_id = self.kwargs['distributor_id']
         queryset = ReturnInvoiceItems.objects.filter(return_invoice__distributor__id=distributor_id)
         return queryset
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.get_queryset()
+        serializer = self.serializer_class(queryset, many=True)
+
+        data = serializer.data
+        for item_data in data:
+            return_invoice_item_id = item_data.get('id')
+            return_invoice_item = ReturnInvoiceItems.objects.get(id=return_invoice_item_id)
+
+            # Получаем связанный с ReturnInvoiceItems InvoiceItems
+            invoice_item = return_invoice_item.invoice_item
+
+            # Отнимаем количество возвращаемого товара из соответствующей накладной продажи
+            invoice_item.quantity -= return_invoice_item.quantity
+            invoice_item.product.save()
+
+        return Response(data)
