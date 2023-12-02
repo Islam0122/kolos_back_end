@@ -9,72 +9,47 @@ from django.http import JsonResponse as json_resp
 from django_filters.rest_framework import DjangoFilterBackend
 from product import models as product_models
 from product.api import serializers as product_ser
+from product.models import ProductNormal, Warehouse, ProductDefect
 
 
 class ChangeStateAndMoveView(APIView):
-    def put(self, request, pk, *args, **kwargs):
+    def post(self, request, *args, **kwargs):
         try:
-            # Получаем состояние из запроса
-            new_state = request.data.get('state')
+            product_id = request.data.get('product_id')
+            quantity = request.data.get('quantity')
+            source_warehouse_id = request.data.get('source_warehouse_id')
+            destination_warehouse_id = request.data.get('destination_warehouse_id')
 
-            if new_state == 'defect':
-                # Получаем объект из ProductNormal
-                product_normal = product_models.ProductNormal.objects.get(pk=pk)
-                # Создаем новый объект в ProductDefect
-                product_defect_serializer = product_ser.ProductDefectSerializer(data={
-                    'name': product_normal.name,
-                    'category': request.data.get('category'),
-                    'identification_number': product_normal.identification_number,
-                    'unit': product_normal.unit,
-                    'quantity': product_normal.quantity,
-                    'price': product_normal.price,
-                    'sum': product_normal.sum,
-                    'state': new_state,
-                })
+            # Получаем объекты товара и складов
+            product = ProductNormal.objects.get(id=product_id)
+            Warehouse.objects.get(id=source_warehouse_id)
+            destination_warehouse = Warehouse.objects.get(id=destination_warehouse_id)
 
-                if product_defect_serializer.is_valid():
-                    product_defect_serializer.save()
-                else:
-                    return Response(product_defect_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            # Проверяем, достаточно ли товара на исходном складе
+            if product.quantity < quantity:
+                return Response({'error': 'Недостаточно товара на складе'}, status=status.HTTP_400_BAD_REQUEST)
 
-                # Удаляем объект из ProductNormal
-                product_normal.delete()
+            # Если товар перемещается полностью и его количество на исходном складе становится нулевым
+            if product.quantity - quantity == 0:
+                # Архивация
+                product.is_archived = True
+                product.save()
+            else:
+                # Создаем новый объект бракованного товара на целевом складе
+                ProductDefect.objects.create(
+                    product=product,
+                    quantity=quantity,
+                    warehouse=destination_warehouse
+                )
 
-                return Response(product_defect_serializer.data, status=status.HTTP_200_OK)
+                # Обновляем количество товара на исходном складе
+                product.quantity -= quantity
+                product.save()
 
-            elif new_state == 'normal':
-                # Получаем объект из ProductDefect
-                product_defect = product_models.ProductDefect.objects.get(pk=pk)
-                # Создаем новый объект в ProductNormal
-                product_normal_serializer = product_ser.ProductNormalSerializer(data={
-                    'name': product_defect.name,
-                    'category': request.data.get('category'),
-                    'identification_number': product_defect.identification_number,
-                    'unit': product_defect.unit,
-                    'quantity': product_defect.quantity,
-                    'price': product_defect.price,
-                    'sum': product_defect.sum,
-                    'state': new_state,
-                })
+            return Response({'success': 'Товары перемещены успешно'}, status=status.HTTP_200_OK)
 
-                if product_normal_serializer.is_valid():
-                    product_normal_serializer.save()
-                else:
-                    return Response(product_normal_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-                # Удаляем объект из ProductDefect
-                product_defect.delete()
-
-                return Response(product_normal_serializer.data, status=status.HTTP_200_OK)
-
-            # Если состояние не "defect" или "normal", возвращаем ошибку
-            return Response({'detail': 'Invalid state.'}, status=status.HTTP_400_BAD_REQUEST)
-
-        except product_models.ProductNormal.DoesNotExist:
-            return Response({'detail': 'Not found.'}, status=status.HTTP_404_NOT_FOUND)
-
-
-
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 class ProducDefecttItemViewSet(ModelViewSet):
     serializer_class = product_ser.ProductDefectItemSerializer
     lookup_field = 'pk'

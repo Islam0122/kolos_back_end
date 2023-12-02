@@ -100,6 +100,12 @@ class ProductDefect(BaseModel):
     product = models.ForeignKey(ProductNormal, on_delete=models.CASCADE, related_name='defective_products',
                                 verbose_name='Бракованный товар')
     quantity = models.PositiveIntegerField(default=0, verbose_name='Колличество')
+    warehouse = models.ForeignKey(
+        Warehouse,
+        on_delete=models.CASCADE,
+        related_name='defect_products',
+        verbose_name=_('Склад (бракованный товар)')
+    )
 
     def __str__(self):
         return f"DefectiveProduct {self.product.name}"
