@@ -90,7 +90,6 @@ class GenerateReturnPdf(APIView):
         total_amount = sum(item['total_price'] for item in products_return_invoice_data)
         params = {
             'return_invoice_data': {
-                'identification_number': return_invoice.identification_number_return,
                 'distributor': DistributorSerializer(return_invoice.distributor).data,
                 'return_date': return_invoice.return_date,
                 'products_return_invoice': products_return_invoice_data,
