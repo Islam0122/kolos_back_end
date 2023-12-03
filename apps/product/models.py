@@ -80,6 +80,7 @@ class ProductNormal(BaseModel):
     warehouse = models.ForeignKey(
         Warehouse,
         on_delete=models.CASCADE,
+        default=1,
         related_name='normal_products',
         verbose_name=_('Склад (нормальный товар)')
     )

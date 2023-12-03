@@ -19,7 +19,7 @@ urlpatterns = [
         'get': 'retrieve', 'put': 'update', 'patch': 'partial_update', 'delete': 'destroy'
     })),
 
-    path('change-state-and-move/', views.ChangeStateAndMoveView.as_view(), name='change-state-and-move'),
+    path('change-state-and-move/<int:product_id>/', views.ChangeStateAndMoveView.as_view(), name='change-state-and-move'),
 
 
     path('archive/', views.ArchivedProductView.as_view({

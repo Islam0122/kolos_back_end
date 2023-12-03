@@ -5,60 +5,44 @@ from rest_framework.filters import SearchFilter
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet
-from django.http import JsonResponse as json_resp
 from django_filters.rest_framework import DjangoFilterBackend
 from product import models as product_models
 from product.api import serializers as product_ser
-from product.models import ProductNormal, Warehouse, ProductDefect
+from product.models import ProductNormal
+from django.shortcuts import get_object_or_404
+from django.http import JsonResponse
+from product.choices import State
 
 
 class ChangeStateAndMoveView(APIView):
-    pass
-    # def post(self, request, *args, **kwargs):
-    #     try:
-    #         product_id = request.data.get('product_id')
-    #         quantity = request.data.get('quantity')
-    #         source_warehouse_id = request.data.get('source_warehouse_id')
-    #         destination_warehouse_id = request.data.get('destination_warehouse_id')
-    #
-    #         # Получаем объекты товара и складов
-    #         product = ProductNormal.objects.get(id=product_id)
-    #         Warehouse.objects.get(id=source_warehouse_id)
-    #         destination_warehouse = Warehouse.objects.get(id=destination_warehouse_id)
-    #
-    #         # Проверяем, достаточно ли товара на исходном складе
-    #         if product.quantity < quantity:
-    #             return Response({'error': 'Недостаточно товара на складе'}, status=status.HTTP_400_BAD_REQUEST)
-    #
-    #         # Если товар перемещается полностью и его количество на исходном складе становится нулевым
-    #         if product.quantity - quantity == 0:
-    #             # Архивация
-    #             # Создаем новый объект бракованного товара на целевом складе
-    #             ProductDefect.objects.create(
-    #                 product=product,
-    #                 quantity=quantity,
-    #                 warehouse=destination_warehouse
-    #             )
-    #
-    #             # Обновляем количество товара на исходном складе
-    #             product.quantity -= quantity
-    #             product.save()
-    #
-    #         return Response({'success': 'Товары перемещены успешно'}, status=status.HTTP_200_OK)
-    #
-    #     except Exception as e:
-    #         return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-    #             product.is_archived = True
-    #             product.save()
-    #         else:
+
+
+    def post(self, request, product_id, *args, **kwargs):
+        product = get_object_or_404(ProductNormal, id=product_id)
+        print(product)
+        new_state = request.data.get("new_state")
+        print(new_state)
+
+        if new_state in [State.NORMAL, State.DEFECT]:
+            print('444')
+            product.state = new_state
+            print(new_state)
+            print(product)
+            product.save()
+            return JsonResponse({'message': 'Состояние продукта успешно изменено.'})
+        else:
+            return JsonResponse({'error': 'Неверное состояние продукта.'}, status=400)
+
+
 class ProducDefecttItemViewSet(ModelViewSet):
-    serializer_class = product_ser.ProductDefectItemSerializer
+    serializer_class = product_ser.ProductDefectSerializer
     lookup_field = 'pk'
     filter_backends = [SearchFilter, DjangoFilterBackend]
     search_fields = ['name', 'identification_number']
 
     def get_queryset(self):
-        queryset = product_models.ProductDefect.objects.filter(is_archived=False)
+        queryset = product_models.ProductDefect.objects.filter(product__is_archived=False, product__state='defect')
+        print(queryset)
 
         # Фильтрация по комбинированным полям без учета регистра и акцентов (для PostgreSQL)
         search_query = self.request.query_params.get('search_query', None)
@@ -102,7 +86,7 @@ class ProductItemViewSet(ModelViewSet):
     search_fields = ['name', 'identification_number']
 
     def get_queryset(self):
-        queryset = product_models.ProductNormal.objects.filter(is_archived=False)
+        queryset = product_models.ProductNormal.objects.filter(is_archived=False, state='normal')
 
         # Фильтрация по комбинированным полям без учета регистра и акцентов (для PostgreSQL)
         search_query = self.request.query_params.get('search_query', None)
