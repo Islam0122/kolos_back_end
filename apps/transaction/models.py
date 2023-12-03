@@ -3,6 +3,7 @@ from django.db import models, transaction
 from django.utils.translation import gettext_lazy as _
 from product import choices
 from product.models import ProductNormal, ProductDefect
+from django.db.models import F
 
 
 class Invoice(models.Model):
@@ -107,51 +108,36 @@ class ReturnInvoiceItems(models.Model):
     )
 
     def save(self, *args, **kwargs):
+        product_normal = self.invoice_item.product
+
         with transaction.atomic():
-            try:
-                product_normal = self.invoice_item.product
+            if self.state == choices.State.DEFECT:
+                defect_item, created = ProductDefect.objects.get_or_create(
+                    product=product_normal,
+                    defaults={'quantity': self.quantity}
+                )
 
-                if self.state == choices.State.DEFECT:
-                    defect_item, created = ProductDefect.objects.get_or_create(
-                        product=product_normal,
-                        defaults={
-                            'quantity': self.quantity,
-                        }
-                    )
+                if not created:
+                    defect_item.quantity += self.quantity
+                    defect_item.save()
+            else:
+                # Увеличиваем количество на основном складе
+                ProductNormal.objects.filter(
+                    identification_number=product_normal.identification_number
+                ).update(
+                    quantity=F('quantity') + self.quantity
+                )
 
-                    if not created:
-                        if self.quantity > 0:
-                            defect_item.quantity += self.quantity
+                # Уменьшаем количество в истории продаж
+                invoice_item = self.invoice_item
+                invoice_item.quantity -= self.quantity
 
-                            if defect_item.quantity <= 0:
-                                defect_item.delete()
-                            else:
-                                defect_item.save()
-                else:
-                    normal_item, created = ProductNormal.objects.get_or_create(
-                        identification_number=product_normal.identification_number,
-                        defaults={
-                            'name': product_normal.name,
-                            'category': product_normal.category,
-                            'unit': product_normal.unit,
-                            'quantity': self.quantity,
-                            'price': product_normal.price,
-                            'state': self.state
-                        }
-                    )
+                # Используем F-объект для избежания race condition при обновлении поля
+                InvoiceItems.objects.filter(pk=invoice_item.pk).update(
+                    quantity=F('quantity') - self.quantity
+                )
 
-                    if not created:
-                        if self.quantity > 0:
-                            normal_item.quantity -= self.quantity
-
-                            if normal_item.quantity <= 0:
-                                normal_item.save()
-                        else:
-                            normal_item.save()
-                super().save(*args, **kwargs)
-            except Exception as e:
-                # Обработка ошибок при работе с базой данных
-                print(f"Error saving: {e}")
+        super().save(*args, **kwargs)
 
     def total_price(self):
         return self.invoice_item.product.price * self.quantity

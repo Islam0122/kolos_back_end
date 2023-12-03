@@ -13,43 +13,44 @@ from product.models import ProductNormal, Warehouse, ProductDefect
 
 
 class ChangeStateAndMoveView(APIView):
-    def post(self, request, *args, **kwargs):
-        try:
-            product_id = request.data.get('product_id')
-            quantity = request.data.get('quantity')
-            source_warehouse_id = request.data.get('source_warehouse_id')
-            destination_warehouse_id = request.data.get('destination_warehouse_id')
-
-            # Получаем объекты товара и складов
-            product = ProductNormal.objects.get(id=product_id)
-            Warehouse.objects.get(id=source_warehouse_id)
-            destination_warehouse = Warehouse.objects.get(id=destination_warehouse_id)
-
-            # Проверяем, достаточно ли товара на исходном складе
-            if product.quantity < quantity:
-                return Response({'error': 'Недостаточно товара на складе'}, status=status.HTTP_400_BAD_REQUEST)
-
-            # Если товар перемещается полностью и его количество на исходном складе становится нулевым
-            if product.quantity - quantity == 0:
-                # Архивация
-                product.is_archived = True
-                product.save()
-            else:
-                # Создаем новый объект бракованного товара на целевом складе
-                ProductDefect.objects.create(
-                    product=product,
-                    quantity=quantity,
-                    warehouse=destination_warehouse
-                )
-
-                # Обновляем количество товара на исходном складе
-                product.quantity -= quantity
-                product.save()
-
-            return Response({'success': 'Товары перемещены успешно'}, status=status.HTTP_200_OK)
-
-        except Exception as e:
-            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    pass
+    # def post(self, request, *args, **kwargs):
+    #     try:
+    #         product_id = request.data.get('product_id')
+    #         quantity = request.data.get('quantity')
+    #         source_warehouse_id = request.data.get('source_warehouse_id')
+    #         destination_warehouse_id = request.data.get('destination_warehouse_id')
+    #
+    #         # Получаем объекты товара и складов
+    #         product = ProductNormal.objects.get(id=product_id)
+    #         Warehouse.objects.get(id=source_warehouse_id)
+    #         destination_warehouse = Warehouse.objects.get(id=destination_warehouse_id)
+    #
+    #         # Проверяем, достаточно ли товара на исходном складе
+    #         if product.quantity < quantity:
+    #             return Response({'error': 'Недостаточно товара на складе'}, status=status.HTTP_400_BAD_REQUEST)
+    #
+    #         # Если товар перемещается полностью и его количество на исходном складе становится нулевым
+    #         if product.quantity - quantity == 0:
+    #             # Архивация
+    #             # Создаем новый объект бракованного товара на целевом складе
+    #             ProductDefect.objects.create(
+    #                 product=product,
+    #                 quantity=quantity,
+    #                 warehouse=destination_warehouse
+    #             )
+    #
+    #             # Обновляем количество товара на исходном складе
+    #             product.quantity -= quantity
+    #             product.save()
+    #
+    #         return Response({'success': 'Товары перемещены успешно'}, status=status.HTTP_200_OK)
+    #
+    #     except Exception as e:
+    #         return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    #             product.is_archived = True
+    #             product.save()
+    #         else:
 class ProducDefecttItemViewSet(ModelViewSet):
     serializer_class = product_ser.ProductDefectItemSerializer
     lookup_field = 'pk'

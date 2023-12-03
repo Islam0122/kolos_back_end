@@ -61,28 +61,16 @@ class ReturnInvoiceViewSet(viewsets.ModelViewSet):
         return_invoice_items_data = request.data.pop('return_product', None)
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
+        instance = serializer.save()
 
         with transaction.atomic():
-            instance = serializer.save()
-
             for return_product_data in return_invoice_items_data or []:
-                # Создаем объект ReturnInvoiceItems и сохраняем его
-                return_item = ReturnInvoiceItems.objects.create(return_invoice=instance, **return_product_data)
-                # Проверяем, существует ли связанный объект invoice_item
-                if return_item.invoice_item:
-                    invoice_item = return_item.invoice_item
-                    result = invoice_item.quantity - return_item.quantity
-                    if result == 0:
-                        # Удаляем invoice_item, так как товар вернули полностью
-                        invoice_item.delete()
-                    else:
-                        invoice_item.quantity = result
-                        print(invoice_item)
-                        invoice_item.save()
-
-            headers = self.get_success_headers(serializer.data)
-            return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
-
+                return_item, created = ReturnInvoiceItems.objects.update_or_create(
+                    return_invoice=instance,
+                    defaults=return_product_data
+                )
+        headers = self.get_success_headers(serializer.data)
+        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
 #список купленных товаров передаваемого ДИСТ
 class DistributorInvoiceItemsView(generics.ListAPIView):
