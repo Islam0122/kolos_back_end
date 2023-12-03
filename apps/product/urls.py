@@ -11,11 +11,11 @@ urlpatterns = [
         'get': 'retrieve', 'put': 'update', 'patch': 'partial_update', 'delete': 'destroy'
     })),
 
-    path('defect/', views.ProducDefecttItemViewSet.as_view({
+    path('defect/', views.ProductDefectItemViewSet.as_view({
         'get': 'list', 'post': 'create'
     })),
 
-    path('defect/<int:pk>/', views.ProducDefecttItemViewSet.as_view({
+    path('defect/<int:pk>/', views.ProductDefectItemViewSet.as_view({
         'get': 'retrieve', 'put': 'update', 'patch': 'partial_update', 'delete': 'destroy'
     })),
 

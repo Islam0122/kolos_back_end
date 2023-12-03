@@ -1,10 +1,15 @@
 from django.db import transaction
+from django.db.models import Q
+from django.shortcuts import get_object_or_404
+
 from ..models import Invoice, InvoiceItems, ReturnInvoice, ReturnInvoiceItems
 from .serializers import InvoiceSerializer, InvoiceItemsSerializer, ReturnInvoiceSerializer,\
     ReturnInvoiceItemsSerializer
 from rest_framework import generics
 from rest_framework import viewsets, status
 from rest_framework.response import Response
+
+from distributor.models import Distributor
 
 
 class InvoiceItemsViewSet(generics.ListCreateAPIView):
@@ -78,15 +83,35 @@ class DistributorInvoiceItemsView(generics.ListAPIView):
     serializer_class = InvoiceItemsSerializer
 
     def get_queryset(self):
-        distributor_id = self.kwargs['distributor_id']
+        distributor_id = self.kwargs.get('distributor_id')  # Или откуда у вас берется distributor_id
 
+        distributor = get_object_or_404(Distributor, id=distributor_id)
+
+        queryset = InvoiceItems.objects.filter(invoice__distributor=distributor)
+        print(queryset)
+
+        # Фильтрация по комбинированным полям без учета регистра и акцентов (для PostgreSQL)
+        search_query = self.request.query_params.get('search_query', None)
+        if search_query:
+            queryset = queryset.filter(
+                Q(product__name__iregex=fr'.*{search_query}.*') |
+                Q(product__identification_number__iregex=fr'.*{search_query}.*')
+            )
+
+        category_filter = self.request.query_params.get('category', None)
+        if category_filter:
+            queryset = queryset.filter(product__category__title__iexact=category_filter)
+
+        # Фильтрация по дате
         start_date = self.request.query_params.get('start_date', None)
         end_date = self.request.query_params.get('end_date', None)
 
-        queryset = InvoiceItems.objects.filter(invoice__distributor__id=distributor_id, quantity__gt=0)
-
         if start_date and end_date:
+            # Если указаны обе даты, ищем в интервале между ними
             queryset = queryset.filter(invoice__sale_date__range=[start_date, end_date])
+        elif start_date:
+            # Если указана только начальная дата, ищем по ней
+            queryset = queryset.filter(invoice__sale_date=start_date)
 
         return queryset
 
@@ -97,7 +122,33 @@ class ReturnInvoiceListByDistributor(generics.ListAPIView):
     serializer_class = ReturnInvoiceItemsSerializer
 
     def get_queryset(self):
-        distributor_id = self.kwargs['distributor_id']
+        distributor_id = self.kwargs.get('distributor_id')  # Или откуда у вас берется distributor_id
+
         queryset = ReturnInvoiceItems.objects.filter(return_invoice__distributor__id=distributor_id)
+        print(queryset)
+
+        # Фильтрация по комбинированным полям без учета регистра и акцентов (для PostgreSQL)
+        search_query = self.request.query_params.get('search_query', None)
+        if search_query:
+            queryset = queryset.filter(
+                Q(invoice_item__product__name__iregex=fr'.*{search_query}.*') |
+                Q(invoice_item__product__identification_number__iregex=fr'.*{search_query}.*')
+            )
+
+        category_filter = self.request.query_params.get('category', None)
+        if category_filter:
+            queryset = queryset.filter(invoice_item__product__category__title__iexact=category_filter)
+
+        # Фильтрация по дате
+        start_date = self.request.query_params.get('start_date', None)
+        end_date = self.request.query_params.get('end_date', None)
+
+        if start_date and end_date:
+            # Если указаны обе даты, ищем в интервале между ними
+            queryset = queryset.filter(return_invoice__return_date__range=[start_date, end_date])
+        elif start_date:
+            # Если указана только начальная дата, ищем по ней
+            queryset = queryset.filter(return_invoice__return_date=start_date)
+
         return queryset
 

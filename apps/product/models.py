@@ -98,8 +98,7 @@ class ProductNormal(BaseModel):
 
 
 class ProductDefect(BaseModel):
-    product = models.ForeignKey(ProductNormal, on_delete=models.CASCADE, related_name='defective_products',
-                                verbose_name='Бракованный товар')
+    product = models.ForeignKey(ProductNormal, on_delete=models.CASCADE, related_name='defective_products', verbose_name='Бракованный товар')
     quantity = models.PositiveIntegerField(default=0, verbose_name='Колличество')
     warehouse = models.ForeignKey(
         Warehouse,

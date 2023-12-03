@@ -16,7 +16,6 @@ from product.choices import State
 
 class ChangeStateAndMoveView(APIView):
 
-
     def post(self, request, product_id, *args, **kwargs):
         product = get_object_or_404(ProductNormal, id=product_id)
         print(product)
@@ -34,32 +33,27 @@ class ChangeStateAndMoveView(APIView):
             return JsonResponse({'error': 'Неверное состояние продукта.'}, status=400)
 
 
-class ProducDefecttItemViewSet(ModelViewSet):
-    serializer_class = product_ser.ProductDefectSerializer
+class ProductDefectItemViewSet(ModelViewSet):
+    serializer_class = product_ser.ProductDefectItemSerializer
     lookup_field = 'pk'
     filter_backends = [SearchFilter, DjangoFilterBackend]
-    search_fields = ['name', 'identification_number']
+    search_fields = ['product__name', 'product__identification_number']
 
     def get_queryset(self):
-        queryset = product_models.ProductDefect.objects.filter(product__is_archived=False, product__state='defect')
+        queryset = product_models.ProductDefect.objects.all().select_related('product__category')
         print(queryset)
 
         # Фильтрация по комбинированным полям без учета регистра и акцентов (для PostgreSQL)
         search_query = self.request.query_params.get('search_query', None)
         if search_query:
             queryset = queryset.filter(
-                Q(name__iregex=fr'.*{search_query}.*') |
-                Q(identification_number__iregex=fr'.*{search_query}.*')
+                Q(product__name__iregex=fr'.*{search_query}.*') |
+                Q(product__identification_number__iregex=fr'.*{search_query}.*')
             )
-
-        # Фильтрация по отдельным полям без учета регистра (для PostgreSQL)
-        state_filter = self.request.query_params.get('state', None)
-        if state_filter:
-            queryset = queryset.filter(state__iexact=state_filter)
 
         category_filter = self.request.query_params.get('category', None)
         if category_filter:
-            queryset = queryset.filter(category__title__iexact=category_filter)
+            queryset = queryset.filter(product__category__title__iexact=category_filter)
 
         return queryset
 
@@ -86,7 +80,7 @@ class ProductItemViewSet(ModelViewSet):
     search_fields = ['name', 'identification_number']
 
     def get_queryset(self):
-        queryset = product_models.ProductNormal.objects.filter(is_archived=False, state='normal')
+        queryset = product_models.ProductNormal.objects.filter(is_archived=False)
 
         # Фильтрация по комбинированным полям без учета регистра и акцентов (для PostgreSQL)
         search_query = self.request.query_params.get('search_query', None)
