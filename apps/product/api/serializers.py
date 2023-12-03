@@ -17,7 +17,7 @@ class ProductItemSerializer(serializers.ModelSerializer):
     class Meta:
         model = m.ProductNormal
         fields = ['id', 'name', 'category', 'identification_number', 'unit', 'quantity', 'price',
-                  'sum', 'state']
+                  'sum', 'state', 'warehouse']
 
 
 class ProductDefectItemSerializer(serializers.ModelSerializer):
