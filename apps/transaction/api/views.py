@@ -67,7 +67,8 @@ class ReturnInvoiceViewSet(viewsets.ModelViewSet):
             for return_product_data in return_invoice_items_data or []:
                 return_item, created = ReturnInvoiceItems.objects.update_or_create(
                     return_invoice=instance,
-                    defaults=return_product_data
+                    invoice_item_id=return_product_data['invoice_item_id'],
+                    defaults={'quantity': return_product_data['quantity'], 'state': return_product_data['state']}
                 )
         headers = self.get_success_headers(serializer.data)
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
