@@ -74,7 +74,7 @@ class ReturnInvoiceItemsSerializer(serializers.ModelSerializer):
 
     def get_sale_date(self, obj):
         try:
-            sale_date = obj.invoice_item.invoiceitems_set.first().invoice.sale_date
+            sale_date = obj.invoice_item.invoice.sale_date
             return sale_date
         except AttributeError:
             return None
