@@ -111,6 +111,11 @@ class ReturnInvoiceItems(models.Model):
         product_normal = self.invoice_item.product
 
         with transaction.atomic():
+            try:
+                invoice_item = self.invoice_item
+            except InvoiceItems.DoesNotExist:
+                raise ValueError("Товар не найден в истории продаж.")
+
             if self.state == choices.State.DEFECT:
                 defect_item, created = ProductDefect.objects.get_or_create(
                     product=product_normal,
@@ -133,9 +138,9 @@ class ReturnInvoiceItems(models.Model):
                 invoice_item.quantity -= self.quantity
 
                 # Используем F-объект для избежания race condition при обновлении поля
-                InvoiceItems.objects.filter(pk=invoice_item.pk).update(
-                    quantity=F('quantity') - self.quantity
-                )
+            InvoiceItems.objects.filter(pk=invoice_item.pk).update(
+                quantity=F('quantity') - self.quantity
+            )
 
         super().save(*args, **kwargs)
 

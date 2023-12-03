@@ -82,7 +82,7 @@ class DistributorInvoiceItemsView(generics.ListAPIView):
         start_date = self.request.query_params.get('start_date', None)
         end_date = self.request.query_params.get('end_date', None)
 
-        queryset = InvoiceItems.objects.filter(invoice__distributor__id=distributor_id)
+        queryset = InvoiceItems.objects.filter(invoice__distributor__id=distributor_id, quantity__gt=0)
 
         if start_date and end_date:
             queryset = queryset.filter(invoice__sale_date__range=[start_date, end_date])

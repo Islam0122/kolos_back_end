@@ -104,6 +104,7 @@ class ProductDefect(BaseModel):
         Warehouse,
         on_delete=models.CASCADE,
         related_name='defect_products',
+        null=True,
         verbose_name=_('Склад (бракованный товар)')
     )
 
