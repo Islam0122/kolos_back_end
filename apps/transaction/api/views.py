@@ -87,8 +87,7 @@ class DistributorInvoiceItemsView(generics.ListAPIView):
 
         distributor = get_object_or_404(Distributor, id=distributor_id)
 
-        queryset = InvoiceItems.objects.filter(invoice__distributor=distributor)
-        print(queryset)
+        queryset = InvoiceItems.objects.filter(invoice__distributor=distributor, quantity__gt=0)
 
         # Фильтрация по комбинированным полям без учета регистра и акцентов (для PostgreSQL)
         search_query = self.request.query_params.get('search_query', None)
