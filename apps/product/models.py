@@ -1,4 +1,4 @@
-from django.db import models
+from django.db import models, transaction
 from django.utils.translation import gettext_lazy as _
 from . import choices
 from common.models import BaseModel
@@ -80,10 +80,12 @@ class ProductNormal(BaseModel):
     warehouse = models.ForeignKey(
         Warehouse,
         on_delete=models.CASCADE,
-        default=1,
+        default='1',
         related_name='normal_products',
         verbose_name=_('Склад (нормальный товар)')
     )
+
+
 
     def __str__(self):
         return f'наименование: {self.name}, кол-во: {self.quantity}'
@@ -104,9 +106,11 @@ class ProductDefect(BaseModel):
         Warehouse,
         on_delete=models.CASCADE,
         related_name='defect_products',
-        null=True,
+        default='2',
         verbose_name=_('Склад (бракованный товар)')
+
     )
+
 
     def __str__(self):
         return f"DefectiveProduct {self.product.name}"
