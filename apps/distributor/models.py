@@ -1,8 +1,10 @@
+from common.models import BaseModel
 from django.db import models
+from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
 
-class Distributor(models.Model):
+class Distributor(BaseModel):
     photo = models.ImageField(
         upload_to='media/distributor_images/',
         blank=True,
@@ -86,3 +88,13 @@ class Distributor(models.Model):
     class Meta:
         verbose_name = "Дистрибьютор"
         verbose_name_plural = "Дистрибьюторы"
+
+    def archived(self):
+        self.is_archived = True
+        self.delete_at = timezone.now()
+        self.save()
+
+    def restore(self):
+        self.is_archived = False
+        self.delete_at = None
+        self.save()

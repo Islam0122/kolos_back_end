@@ -130,3 +130,12 @@ class ProductDefect(BaseModel):
         verbose_name = _('Бракованные товары')
         verbose_name_plural = _('Бракованные товары')
 
+    def archived(self):
+        self.is_archived = True
+        self.delete_at = timezone.now()
+        self.save()
+
+    def restore(self):
+        self.is_archived = False
+        self.delete_at = None
+        self.save()

@@ -1,7 +1,6 @@
 from django.db import transaction
 from django.db.models import Q
 from rest_framework import status, generics
-from django.shortcuts import get_object_or_404
 from rest_framework.filters import SearchFilter
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -13,22 +12,15 @@ from product.models import ProductNormal, ProductDefect, Warehouse
 from django.shortcuts import get_object_or_404
 from django.http import JsonResponse
 from product.choices import State
-
-
-from django.db import models, transaction
-from django.shortcuts import get_object_or_404
-from django.http import JsonResponse
 from rest_framework.views import APIView
 
 
 class MoveNormalToDefectiveAPIView(APIView):
-    def post(self, request, *args, **kwargs):
-        normal_product_id = request.data.get('normal_product_id')
-        new_warehouse_id = request.data.get('new_warehouse_id')
+    def post(self, request, pk, *args, **kwargs):
 
         try:
-            normal_product = ProductNormal.objects.get(pk=normal_product_id)
-            new_warehouse = Warehouse.objects.get(pk=new_warehouse_id)
+            normal_product = get_object_or_404(ProductNormal, pk=pk)
+            new_warehouse = get_object_or_404(Warehouse, pk=2)
 
             with transaction.atomic():
                 # Проверяем, существует ли товар с таким же identification_number в браке
@@ -58,14 +50,13 @@ class MoveNormalToDefectiveAPIView(APIView):
         except Exception as e:
             return Response({"detail": f"Ошибка при перемещении товара: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
+
 class MoveDefectiveToNormalAPIView(APIView):
-    def post(self, request, *args, **kwargs):
-        defective_product_id = request.data.get('defect_product_id')
-        new_warehouse_id = request.data.get('new_warehouse_id')
+    def post(self, request, pk, *args, **kwargs):
 
         try:
-            defective_product = ProductDefect.objects.get(pk=defective_product_id)
-            new_warehouse = Warehouse.objects.get(pk=new_warehouse_id)
+            defective_product = get_object_or_404(ProductDefect, pk=pk)
+            new_warehouse = get_object_or_404(Warehouse, pk=1)
 
             with transaction.atomic():
                 # Проверяем, существует ли товар с таким же identification_number на новом складе
@@ -127,8 +118,8 @@ class ProductDefectItemViewSet(ModelViewSet):
 
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()
-        instance.is_archived = True
-        instance.save()
+        # instance.is_archived = True
+        instance.archived()
 
         return Response(status=status.HTTP_204_NO_CONTENT)
 

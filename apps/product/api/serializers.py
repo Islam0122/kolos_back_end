@@ -20,9 +20,6 @@ class ProductItemSerializer(serializers.ModelSerializer):
                   'sum', 'state', 'warehouse', 'delete_at']
 
 
-
-
-
 class ProductTypeSerializer(serializers.ModelSerializer):
     class Meta:
         model = m.ProductNormal
@@ -57,10 +54,11 @@ class ProductDefectItemSerializer(serializers.ModelSerializer):
     state = serializers.CharField(source='product.state')
     is_archived = serializers.BooleanField(source='product.is_archived')
     category = serializers.CharField(source='product.category.title')
+    delete_at = serializers.CharField(source='product.delete_at')
 
     class Meta:
         model = m.ProductDefect
-        fields = ['id', 'name', 'identification_number', 'unit', 'price', 'sum', 'state', 'is_archived', 'category', 'quantity', 'warehouse']
+        fields = ['id', 'name', 'identification_number', 'unit', 'price', 'sum', 'state', 'is_archived', 'category', 'quantity', 'warehouse', 'delete_at']
 
     def update(self, instance, validated_data):
         product_data = validated_data.pop('product', {})
