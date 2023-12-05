@@ -52,13 +52,12 @@ class ProductDefectItemSerializer(serializers.ModelSerializer):
     price = serializers.IntegerField(source='product.price')
     sum = serializers.IntegerField(source='product.sum')
     state = serializers.CharField(source='product.state')
-    is_archived = serializers.BooleanField(source='product.is_archived')
     category = serializers.CharField(source='product.category.title')
-    delete_at = serializers.CharField(source='product.delete_at')
+
 
     class Meta:
         model = m.ProductDefect
-        fields = ['id', 'name', 'identification_number', 'unit', 'price', 'sum', 'state', 'is_archived', 'category', 'quantity', 'warehouse', 'delete_at']
+        fields = ['id', 'name', 'identification_number', 'unit', 'price', 'sum', 'state','category', 'quantity', 'warehouse', 'delete_at','is_archived']
 
     def update(self, instance, validated_data):
         product_data = validated_data.pop('product', {})
@@ -71,3 +70,12 @@ class ProductDefectItemSerializer(serializers.ModelSerializer):
         instance.save()
 
         return instance
+
+
+class ArchivedListItems(serializers.ModelSerializer):
+    category = serializers.SlugRelatedField(slug_field='title', queryset=m.Category.objects.all())
+    sum = serializers.ReadOnlyField()
+    class Meta:
+        fields = '__all__'
+
+

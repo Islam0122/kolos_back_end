@@ -22,11 +22,23 @@ urlpatterns = [
     path('move_defect_to_normal/<int:pk>/', MoveDefectiveToNormalAPIView.as_view() ),
     path('move_normal_to_defect/<int:pk>/', MoveNormalToDefectiveAPIView.as_view()),
 
-    path('archive/', views.ArchivedProductView.as_view({
-        'get': 'list'
+    # path('normal/', views.ArchivedProductView.as_view({
+    #     'get': 'list'
+    # })),
+
+    path('archive/', views.CombinedProductView.as_view(), name='combined-products'),
+
+    path('archive-normal/<int:pk>/', views.ArchivedProductView.as_view({
+        'get': 'retrieve', 'put': 'update', 'delete': 'restore'
     })),
 
-    path('archive/<int:pk>/', views.ArchivedProductView.as_view({
+    # path('archive/', views.ArchivedProductView.as_view(), name='archived-products'),
+
+    # path('defect/archive/', views.ArchivedDefectProductView.as_view({
+    #     'get': 'list'
+    # })),
+
+    path('archive-defect/<int:pk>/', views.ArchivedDefectProductView.as_view({
         'get': 'retrieve', 'put': 'update', 'delete': 'restore'
     })),
 
@@ -35,4 +47,5 @@ urlpatterns = [
 
 
 
+    # path('combined-products/', CombinedProductView.as_view(), name='combined-products')
 ]

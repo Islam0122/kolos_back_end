@@ -9,11 +9,12 @@ class InvoiceItemsSerializer(serializers.ModelSerializer):
     price = serializers.SerializerMethodField()
     total_price = serializers.SerializerMethodField()
     sale_date = serializers.SerializerMethodField()
+    category = serializers.SerializerMethodField()
 
     class Meta:
         model = InvoiceItems
         fields = ['id', 'name', 'identification_number', 'unit', 'price', 'quantity',
-                  'sale_date', 'total_price']
+                  'sale_date', 'total_price', 'category']
 
     def get_identification_number(self, obj):
         return obj.product.identification_number
@@ -29,6 +30,9 @@ class InvoiceItemsSerializer(serializers.ModelSerializer):
 
     def get_sale_date(self, obj):
         return obj.invoice.sale_date
+
+    def get_category(self, obj):  # Добавляем метод для получения категории
+        return obj.product.category.title
 
     def get_total_price(self, obj):
         return obj.total_price()
@@ -94,3 +98,16 @@ class ReturnInvoiceSerializer(serializers.ModelSerializer):
 
 
 
+class SearchSerSeles(serializers.Serializer):
+    name = serializers.SerializerMethodField()
+    category = serializers.SerializerMethodField()
+
+    class Meta:
+        model = InvoiceItems
+        fields = ['id', 'name', 'category']
+
+    def get_name(self, obj):
+        return obj.product.name
+
+    def get_category(self, obj):  # Добавляем метод для получения категории
+        return obj.product.category.title

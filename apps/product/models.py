@@ -121,6 +121,12 @@ class ProductDefect(BaseModel):
         verbose_name=_('Склад (бракованный товар)')
 
     )
+    is_archived = models.BooleanField(
+        _('Архив? '),
+        default=False
+    )
+
+
 
 
     def __str__(self):

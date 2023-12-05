@@ -43,6 +43,8 @@ urlpatterns = [
     path('generate_return_pdf/<int:pk>/', GenerateReturnPdf.as_view(), name='generate_return_pdf'),
 
 
+    path('search_sale/', _.SearchSale.as_view(), name='search_sale'),
+
     # path('invoice_items/', InvoiceItemsViewSet.as_view(), name='invoice-items-list'),
     # path('invoice_items/<int:pk>/', InvoiceItemsViewSetDet.as_view(), name='invoice-items-detail'),
      ]

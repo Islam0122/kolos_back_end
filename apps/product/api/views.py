@@ -13,6 +13,7 @@ from django.shortcuts import get_object_or_404
 from django.http import JsonResponse
 from product.choices import State
 from rest_framework.views import APIView
+from extra_views.generic import GenericInlineFormSetView
 
 
 class MoveNormalToDefectiveAPIView(APIView):
@@ -101,7 +102,7 @@ class ProductDefectItemViewSet(ModelViewSet):
     search_fields = ['product__name', 'product__identification_number']
 
     def get_queryset(self):
-        queryset = product_models.ProductDefect.objects.all().select_related('product__category').filter( quantity__gt=0)
+        queryset = product_models.ProductDefect.objects.filter(is_archived=False).select_related('product__category').filter( quantity__gt=0)
         # Фильтрация по комбинированным полям без учета регистра и акцентов (для PostgreSQL)
         search_query = self.request.query_params.get('search_query', None)
         if search_query:
@@ -190,6 +191,44 @@ class ArchivedProductView(ModelViewSet):
 
         return Response(status=status.HTTP_200_OK)
 
+class ArchivedDefectProductView(ModelViewSet):
+    queryset = product_models.ProductDefect.objects.filter(is_archived=True)
+    serializer_class = product_ser.ProductDefectItemSerializer
+
+    lookup_field = 'pk'
+    filter_backends = [SearchFilter, DjangoFilterBackend]
+    search_fields = ['name', 'identification_number']
+
+    # restore -> product
+    def restore(self, request, *args, **kwargs):
+        instance = self.get_object()
+        instance.restore()
+
+        return Response(status=status.HTTP_200_OK)
+
+
+class CombinedProductView(APIView):
+    def get(self, request, *args, **kwargs):
+        normal_products = ProductNormal.objects.filter(is_archived=True)
+        defect_products = ProductDefect.objects.filter(is_archived=True)
+
+        normal_serializer = product_ser.ProductNormalSerializer(normal_products, many=True)
+        defect_serializer = product_ser.ProductDefectItemSerializer(defect_products, many=True)
+
+        combined_products = normal_serializer.data + defect_serializer.data
+
+        return Response(combined_products)
+
+
+# class ArchivedProductView(APIView):
+#     def get(self, request, *args, **kwargs):
+#         filter = {
+#             'normal_archive': product_models.ProductNormal.objects.filter(is_archived=True),
+#             'defect_archive': product_models.ProductDefect.objects.filter(is_archived=True),
+#             }
+#         serializer = product_ser.ArchivedListItems(filter, many=True)
+#         return Response(serializer.data, status=status.HTTP_200_OK)
+
 
 class Search(APIView):
     filter_backends = [SearchFilter, DjangoFilterBackend]
@@ -212,3 +251,4 @@ class Search(APIView):
 
         serializer = product_ser.SearchSer(result_data, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
