@@ -1,6 +1,7 @@
 from common.models import BaseModel
 from django.db import models
 from django.utils import timezone
+from simple_history.models import HistoricalRecords
 from django.utils.translation import gettext_lazy as _
 
 
@@ -81,6 +82,8 @@ class Distributor(BaseModel):
         default=False,
         verbose_name='В АРХИВ'
     )
+
+    history = HistoricalRecords()
 
     def __str__(self):
         return self.name

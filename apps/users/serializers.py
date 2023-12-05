@@ -12,10 +12,12 @@ def create_custom_validator(field_name, min_length, max_length, message):
         allow_null=False,
         validators=[RegexValidator(regex='^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]*$', message=message)])
 
+
 class UserCreateSerializer(serializers.Serializer):
     username = create_custom_validator('username', 4, 8, 'Логин должен состоять только из букв и цифр.')
     password = create_custom_validator('password', 8, 12,
                                        'Пароль должен содержать как минимум одну букву и одну цифру.')
+
     class Meta:
         model = CustomUser
         fields = ['username', 'password']
@@ -26,6 +28,7 @@ class UserCreateSerializer(serializers.Serializer):
         if CustomUser.objects.filter(username=username).exists():
             raise ValidationError('Пользователь с таким именем уже существует')
         return data
+
 
 class UserSerializer(serializers.Serializer):
     username = serializers.CharField(max_length=50)

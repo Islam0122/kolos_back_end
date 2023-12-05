@@ -18,6 +18,7 @@ THEME_PARTY_APPS = [
     'drf_yasg',
     'axes',
     'django_filters',
+    'simple_history',
 ]
 
 APPS = [

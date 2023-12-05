@@ -1,19 +1,16 @@
 from django.db import transaction
 from django.db.models import Q
-from rest_framework import status, generics
+from rest_framework import status
 from rest_framework.filters import SearchFilter
 from rest_framework.response import Response
-from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet
 from django_filters.rest_framework import DjangoFilterBackend
 from product import models as product_models
 from product.api import serializers as product_ser
 from product.models import ProductNormal, ProductDefect, Warehouse
 from django.shortcuts import get_object_or_404
-from django.http import JsonResponse
 from product.choices import State
 from rest_framework.views import APIView
-from extra_views.generic import GenericInlineFormSetView
 
 
 class MoveNormalToDefectiveAPIView(APIView):

@@ -1,49 +1,39 @@
 from django.db import models
-from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
-from django.utils import timezone
+from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
+from django.utils.translation import gettext_lazy as _
+from users.managers import UserManager
 
-
-class UserManager(BaseUserManager):
-    def create_user(self, username, password, **extra_fields):
-        if not username:
-            raise ValueError('Поле Имя пользователя должно быть задано')
-        user = self.model(username=username, **extra_fields)
-        user.is_active = True
-        user.set_password(password)
-        user.save(using=self._db)
-        return user
-
-    def create_superuser(self, username, password, **extra_fields):
-        extra_fields.setdefault('is_staff', True)
-        extra_fields.setdefault('is_superuser', True)
-
-        if not extra_fields.get('is_staff'):
-            raise ValueError("Superuser must have is_staff = True")
-
-        if not extra_fields.get('is_superuser'):
-            raise ValueError("Superuser must have is_superuser = True")
-        return self.create_user(username, password, **extra_fields)
 
 class CustomUser(AbstractBaseUser, PermissionsMixin):
-    username = models.CharField(db_index=True, max_length=254, unique=True)
-    password = models.CharField(max_length=128, null=True)
-    email = models.EmailField(unique=True, null=True)
-    first_name = models.CharField(max_length=255, null=True, blank=True)
-    last_name = models.CharField(max_length=255, null=True, blank=True)
-    created_at = models.DateTimeField(default=timezone.now)
-    updated_at = models.DateTimeField(auto_now=True)
+
+    ROLE = {
+        ('Гость', 'Гость'),
+        ('Завсклад', 'Завсклад'),
+        ('Директор', 'Директор'),
+    }
+
+    username = models.CharField(_('Логин'), max_length=200, unique=True, db_index=True)
+    is_superuser = models.BooleanField(_('Доступ к админке'), default=False)
     is_staff = models.BooleanField(default=False)
-    is_superuser = models.BooleanField(default=False)
-    is_active = models.BooleanField(default=True)
-
-    USERNAME_FIELD = 'username'
-    REQUIRED_FIELDS = ['password']
-
+    is_active = models.BooleanField(_('Активный пользователь'), default=True)
+    role = models.CharField(_('Роль'), choices=ROLE, default='Гость', max_length=100)
+    first_name = models.CharField(_('Имя'), max_length=200)
+    last_name = models.CharField(_('Фамилия'), max_length=200)
     objects = UserManager()
 
-    def __str__(self):
-        return self.username
+    USERNAME_FIELD = 'username'
+
+    def save(self, *args, **kwargs):
+        if self.role == 'Директор':
+            self.is_superuser = True
+            self.is_staff = True
+        else:
+            self.is_superuser = False
+            self.is_staff = False
+
+        super().save(*args, **kwargs)
 
     class Meta:
+        db_table = 'users'
         verbose_name = "Пользователь"
         verbose_name_plural = "Пользователи"

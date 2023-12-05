@@ -3,6 +3,7 @@ from django.utils.translation import gettext_lazy as _
 from . import choices
 from common.models import BaseModel
 from django.utils import timezone
+from simple_history.models import HistoricalRecords
 
 
 
@@ -86,7 +87,7 @@ class ProductNormal(BaseModel):
         verbose_name=_('Склад (нормальный товар)')
     )
 
-
+    history = HistoricalRecords()
 
     def __str__(self):
         return f'наименование: {self.name}, кол-во: {self.quantity}'
@@ -126,8 +127,7 @@ class ProductDefect(BaseModel):
         default=False
     )
 
-
-
+    history = HistoricalRecords()
 
     def __str__(self):
         return f"DefectiveProduct {self.product.name} (Quantity: {self.quantity}, Warehouse: {self.warehouse})"
