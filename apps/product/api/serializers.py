@@ -17,7 +17,7 @@ class ProductItemSerializer(serializers.ModelSerializer):
     class Meta:
         model = m.ProductNormal
         fields = ['id', 'name', 'category', 'identification_number', 'unit', 'quantity', 'price',
-                  'sum', 'state', 'warehouse']
+                  'sum', 'state', 'warehouse', 'delete_at']
 
 
 
@@ -61,3 +61,15 @@ class ProductDefectItemSerializer(serializers.ModelSerializer):
     class Meta:
         model = m.ProductDefect
         fields = ['id', 'name', 'identification_number', 'unit', 'price', 'sum', 'state', 'is_archived', 'category', 'quantity', 'warehouse']
+
+    def update(self, instance, validated_data):
+        product_data = validated_data.pop('product', {})
+        instance.product.name = product_data.get('name', instance.product.name)
+        # ... остальные обновления product
+        instance.product.save()
+
+        instance.quantity = validated_data.get('quantity', instance.quantity)
+        instance.warehouse = validated_data.get('warehouse', instance.warehouse)
+        instance.save()
+
+        return instance

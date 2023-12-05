@@ -170,8 +170,8 @@ class ProductItemViewSet(ModelViewSet):
 
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()
-        instance.is_archived = True
-        instance.save()
+        # instance.is_archived = True
+        instance.archived()
 
         return Response(status=status.HTTP_204_NO_CONTENT)
 
@@ -195,10 +195,9 @@ class ArchivedProductView(ModelViewSet):
     # restore -> product
     def restore(self, request, *args, **kwargs):
         instance = self.get_object()
-        instance.is_archived = False
-        instance.save()
+        instance.restore()
 
-        return Response(status=status.HTTP_204_NO_CONTENT)
+        return Response(status=status.HTTP_200_OK)
 
 
 class Search(APIView):

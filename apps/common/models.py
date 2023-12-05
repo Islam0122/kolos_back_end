@@ -14,6 +14,12 @@ class BaseModel(models.Model):
         null=True,
         blank=True
     )
+    delete_at = models.DateTimeField(
+        _('удалено в: '),
+        editable=False,
+        null=True,
+        blank=True
+    )
 
     class Meta:
         abstract = True

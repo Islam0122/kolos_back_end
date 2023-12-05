@@ -2,6 +2,7 @@ from django.db import models, transaction
 from django.utils.translation import gettext_lazy as _
 from . import choices
 from common.models import BaseModel
+from django.utils import timezone
 
 
 
@@ -94,6 +95,16 @@ class ProductNormal(BaseModel):
         self.sum = self.quantity * self.price
         return super().save(*args, **kwargs)
 
+    def archived(self):
+        self.is_archived = True
+        self.delete_at = timezone.now()
+        self.save()
+
+    def restore(self):
+        self.is_archived = False
+        self.delete_at = None
+        self.save()
+
     class Meta:
         verbose_name = _('Товар')
         verbose_name_plural = _('Склад-Норм-Товаров')
@@ -113,7 +124,7 @@ class ProductDefect(BaseModel):
 
 
     def __str__(self):
-        return f"DefectiveProduct {self.product.name}"
+        return f"DefectiveProduct {self.product.name} (Quantity: {self.quantity}, Warehouse: {self.warehouse})"
 
     class Meta:
         verbose_name = _('Бракованные товары')

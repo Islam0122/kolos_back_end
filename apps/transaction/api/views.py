@@ -108,9 +108,9 @@ class DistributorInvoiceItemsView(generics.ListAPIView):
         if start_date and end_date:
             # Если указаны обе даты, ищем в интервале между ними
             queryset = queryset.filter(invoice__sale_date__range=[start_date, end_date])
-        elif start_date:
-            # Если указана только начальная дата, ищем по ней
-            queryset = queryset.filter(invoice__sale_date=start_date)
+        # elif start_date:
+        #     # Если указана только начальная дата, ищем по ней
+        #     queryset = queryset.filter(invoice__sale_date=start_date)
 
         return queryset
 
@@ -145,9 +145,9 @@ class ReturnInvoiceListByDistributor(generics.ListAPIView):
         if start_date and end_date:
             # Если указаны обе даты, ищем в интервале между ними
             queryset = queryset.filter(return_invoice__return_date__range=[start_date, end_date])
-        elif start_date:
+        # elif start_date:
             # Если указана только начальная дата, ищем по ней
-            queryset = queryset.filter(return_invoice__return_date=start_date)
+            # queryset = queryset.filter(return_invoice__return_date=start_date)
 
         return queryset
 
