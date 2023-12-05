@@ -33,4 +33,6 @@ urlpatterns = [
     # product-> search
     path('search/', views.Search.as_view()),
 
+
+
 ]
