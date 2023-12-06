@@ -2,6 +2,7 @@ from django.db import transaction
 from django.db.models import Q
 from rest_framework import status
 from rest_framework.filters import SearchFilter
+from rest_framework.generics import ListAPIView
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 from django_filters.rest_framework import DjangoFilterBackend
@@ -249,3 +250,6 @@ class Search(APIView):
         serializer = product_ser.SearchSer(result_data, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
+class CategoryListAPIView(ListAPIView):
+    queryset = product_models.Category.objects.all()
+    serializer_class = product_ser.CategorySerializer

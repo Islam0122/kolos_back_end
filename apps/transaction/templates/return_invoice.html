@@ -97,7 +97,13 @@
         {% for item in return_invoice_data.products_return_invoice %}
             <tr>
                 <td>{% if item.name %}{{ item.name }}{% endif %}</td>
-                <td>{% if item.unit %}{{ item.unit }}{% endif %}</td>
+                <td>
+    {% if item.unit %}
+        {% if item.unit == 'item' %}шт{% endif %}
+        {% if item.unit == 'kilogram' %}кг{% endif %}
+        {% if item.unit == 'liter' %}литр{% endif %}
+    {% endif %}
+</td>
                 <td>{% if item.quantity %}{{ item.quantity }}{% endif %}</td>
                 <td>{% if item.price %}{{ item.price }}{% endif %}</td>
                 <td>{% if item.state %}{{ item.state }}{% endif %}</td>
@@ -133,6 +139,8 @@
             <p>Подпись дистрибьютора: __________________________</p>
         </div>
     </div>
-
+<script>
+    document.getElementById("totalAmount").innerHTML = "{{ return_invoice_data.total_amount }}";
+</script>
 </body>
 </html>

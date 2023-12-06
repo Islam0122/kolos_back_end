@@ -43,9 +43,9 @@ urlpatterns = [
     })),
 
     # product-> search
-    path('search/', views.Search.as_view()),
+    path('clue-products/', views.Search.as_view()),
 
-
+    path('category-name/', views.CategoryListAPIView.as_view()),
 
     # path('combined-products/', CombinedProductView.as_view(), name='combined-products')
 ]

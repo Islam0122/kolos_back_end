@@ -42,8 +42,11 @@ urlpatterns = [
     # генерация pdf конкретного возврата по id накладной
     path('generate_return_pdf/<int:pk>/', GenerateReturnPdf.as_view(), name='generate_return_pdf'),
 
+    # path('search_sale/', _.SearchSale.as_view(), name='search_sale'),
 
-    path('search_sale/', _.SearchSale.as_view(), name='search_sale'),
+    path('clue-products-sold/<int:distributor_id>/', _.SearchSold.as_view()),
+    path('clue-products-returned/<int:distributor_id>/', _.SearchReturned.as_view()),
+
 
     # path('invoice_items/', InvoiceItemsViewSet.as_view(), name='invoice-items-list'),
     # path('invoice_items/<int:pk>/', InvoiceItemsViewSetDet.as_view(), name='invoice-items-detail'),

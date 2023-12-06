@@ -1,6 +1,6 @@
 from rest_framework.views import APIView
 from distributor.api.serializers import DistributorSerializer
-from transaction.api.serializers import InvoiceItemsSerializer, ReturnInvoiceItemsSerializer
+from transaction.api.serializers import InvoiceItemsSerializer, ReturnInvoiceItemsSerializer, ReturnInvoiceItemsSerializerPDF
 from transaction.models import Invoice, ReturnInvoice
 from django.shortcuts import get_object_or_404
 from rest_framework.response import Response
@@ -85,9 +85,10 @@ class GenerateReturnPdf(APIView):
     def get(self, request, pk):
         return_invoice = get_object_or_404(ReturnInvoice, pk=pk)
 
-        products_return_invoice_data = ReturnInvoiceItemsSerializer(instance=return_invoice.return_product.all(),
+        products_return_invoice_data = ReturnInvoiceItemsSerializerPDF(instance=return_invoice.return_product.all(),
                                                                     many=True).data
         total_amount = sum(item['total_price'] for item in products_return_invoice_data)
+        print(products_return_invoice_data)
         params = {
             'return_invoice_data': {
                 'distributor': DistributorSerializer(return_invoice.distributor).data,

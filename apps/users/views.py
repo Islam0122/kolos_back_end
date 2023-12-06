@@ -33,7 +33,7 @@ class LoginAPIView(APIView):
             return Response(data={"message": "Вход в систему выполнен успешно",
                                   "access": str(AccessToken.for_user(user)),
                                   "refresh": str(RefreshToken.for_user(user)),
-                                  "role": "Директор" if user.is_superuser else "Завсклад"}, status=status.HTTP_200_OK)
+                                  "role": user.role}, status=status.HTTP_200_OK)
         else:
             return Response({'detail': 'Неверные данные, попробуйте ещё раз!'}, status=status.HTTP_400_BAD_REQUEST)
 
