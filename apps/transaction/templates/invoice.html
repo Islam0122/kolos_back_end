@@ -101,7 +101,15 @@
         {% for item in invoice_data.products_invoice %}
             <tr>
                 <td>{% if item.name %}{{ item.name }}{% endif %}</td>
-                <td>{% if item.unit %}{{ item.unit }}{% endif %}</td>
+                 <tr>
+                <td>{% if item.name %}{{ item.name }}{% endif %}</td>
+                <td>
+    {% if item.unit %}
+        {% if item.unit == 'item' %}шт{% endif %}
+        {% if item.unit == 'kilogram' %}кг{% endif %}
+        {% if item.unit == 'liter' %}литр{% endif %}
+    {% endif %}
+</td>
                 <td>{% if item.quantity %}{{ item.quantity }}{% endif %}</td>
                 <td>{% if item.price %}{{ item.price }}{% endif %}</td>
                 <td>{% if item.total_price %}{{ item.total_price }}{% endif %}</td>
