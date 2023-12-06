@@ -44,6 +44,9 @@ urlpatterns = [
 
     # product-> search
     path('clue-products/', views.Search.as_view()),
+    path('clue-defect-products/', views.SearchDefect.as_view({
+        'get': 'list', 'post': 'create'
+    })),
 
     path('category-name/', views.CategoryListAPIView.as_view()),
 

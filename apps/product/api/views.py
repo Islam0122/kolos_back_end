@@ -235,7 +235,7 @@ class Search(APIView):
     def get(self, request, format=None):
         queryset = product_models.ProductNormal.objects.filter(is_archived=False)
 
-        search_query = request.query_params.get('search', None)
+        search_query = request.query_params.get('search_query', None)
         if search_query:
             queryset = queryset.filter(
                 Q(name__iregex=fr'.*{search_query}.*')
@@ -249,6 +249,44 @@ class Search(APIView):
 
         serializer = product_ser.SearchSer(result_data, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+class SearchDefect(ModelViewSet):
+    serializer_class = product_ser.SearchDefectSerializer
+    lookup_field = 'pk'
+    filter_backends = [SearchFilter, DjangoFilterBackend]
+    search_fields = ['product__name', 'product__identification_number']
+
+    def get_queryset(self):
+        queryset = product_models.ProductDefect.objects.filter(is_archived=False).select_related('product__category').filter( quantity__gt=0)
+        # Фильтрация по комбинированным полям без учета регистра и акцентов (для PostgreSQL)
+        search_query = self.request.query_params.get('search_query', None)
+        if search_query:
+            queryset = queryset.filter(
+                Q(product__name__iregex=fr'.*{search_query}.*') |
+                Q(product__identification_number__iregex=fr'.*{search_query}.*')
+            )
+
+        category_filter = self.request.query_params.get('category', None)
+        if category_filter:
+            queryset = queryset.filter(product__category__title__iexact=category_filter)
+
+        return queryset
+
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        # instance.is_archived = True
+        instance.archived()
+
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+    def partial_update(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = self.get_serializer(instance, data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data)
+
+
 
 class CategoryListAPIView(ListAPIView):
     queryset = product_models.Category.objects.all()
