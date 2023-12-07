@@ -37,13 +37,8 @@
 
         th, td {
             border: 2px solid #333;
-            text-align: center;
-            padding: 8px;
-            word-wrap: break-word;
-            max-width: 100px;
-            overflow: hidden;
-            white-space: nowrap;
-            text-overflow: ellipsis;
+            vertical-align: middle;
+            padding-top: 4px;
         }
 
         th {
@@ -66,6 +61,9 @@
         background-color: #f2f2f2;
         font-weight: bold;
     }
+    .name-cell{
+        width:300px;
+    }
     </style>
 </head>
 <body>
@@ -78,19 +76,19 @@
         <p>Телефон: +996 312 357 182</p>
     </div>
 
-        <div class="id">
-        <p>Номер накладной:</p>
-        <h2>{{ invoice_data.identification_number}}</h2>
+<!--        <div class="id">-->
+<!--        <p>Номер накладной:</p>-->
+<!--        <h2>{{ invoice_data.identification_number}}</h2>-->
 
-    </div>
+<!--    </div>-->
 
-    <h1>Накладная</h1>
+    <h1>Накладная №{{ invoice_data.identification_number }}</h1>
 
 
 <table>
     <thead>
         <tr>
-            <th>Продукт</th>
+            <th class="name-cell">Продукт</th>
             <th>Единица измерения</th>
             <th>Количество</th>
             <th>Цена</th>
@@ -101,15 +99,13 @@
         {% for item in invoice_data.products_invoice %}
             <tr>
                 <td>{% if item.name %}{{ item.name }}{% endif %}</td>
-                 <tr>
-                <td>{% if item.name %}{{ item.name }}{% endif %}</td>
                 <td>
-    {% if item.unit %}
-        {% if item.unit == 'item' %}шт{% endif %}
-        {% if item.unit == 'kilogram' %}кг{% endif %}
-        {% if item.unit == 'liter' %}литр{% endif %}
-    {% endif %}
-</td>
+                    {% if item.unit %}
+                        {% if item.unit == 'item' %}шт{% endif %}
+                        {% if item.unit == 'kilogram' %}кг{% endif %}
+                        {% if item.unit == 'liter' %}литр{% endif %}
+                    {% endif %}
+                </td>
                 <td>{% if item.quantity %}{{ item.quantity }}{% endif %}</td>
                 <td>{% if item.price %}{{ item.price }}{% endif %}</td>
                 <td>{% if item.total_price %}{{ item.total_price }}{% endif %}</td>

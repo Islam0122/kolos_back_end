@@ -7,7 +7,14 @@
     <title>Возврат</title>
     <style>
         @import url("https://fonts.googleapis.com/css2?family=Rubik:wght@500;700&display=swap");
+/*@page {*/
+/*        size: a4 portrait;*/
 
+/*        @frame main_frame {*/
+/*            -pdf-frame-content: table-wrapper;*/
+/*            left: 10pt; width: 580pt; top: 50pt; ;*/
+/*        }*/
+/*    }*/
         body {
             font-family: 'Rubik', sans-serif;
             margin: 50px;
@@ -33,22 +40,12 @@
 
         th, td {
             border: 2px solid #333;
-            text-align: center;
-            padding: 8px;
-            word-wrap: break-word;
-            /*max-width: 100px;*/
-            overflow: hidden;
-            white-space: nowrap;
-            text-overflow: ellipsis;
+            vertical-align: middle;
+            padding-top: 4px;
         }
 
         th {
             background-color: #f2f2f2;
-        }
-
-        td:first-child {
-            min-width: 10px;
-            max-width: 40px;
         }
 
 
@@ -63,34 +60,36 @@
         background-color: #f2f2f2;
         font-weight: bold;
     }
-    .underline{
-        display:inline-block;
-        width: 25ch;
-        border-bottom: 1px solid black;
-        margin-left: 1ch;
+    .name-cell{
+        width:300px;
     }
+
     </style>
 </head>
 <body>
 
+<div id="wrapper">
 
-
-    <h2 class="date">Дата возврата: {{ return_invoice_data.return_date|date:"d.m.Y" }}</h2>
+   <div>
+        <h2 class="date">Дата возврата: {{ return_invoice_data.return_date|date:"d.m.Y" }}</h2>
 
     <div class="company-info">
         <h2>ОсОО 'Пивоваренная компания KOLOS'</h2>
         <p>улица П. Тольятти, дом 8, Кара-Балта 722000</p>
         <p>Телефон: +996 312 357 182</p>
+    </div>
 
 
     <h1>Накладная на Возврат товара</h1>
+   </div>
 
 
-<table>
+<div id="table-wrapper">
+    <table>
     <thead>
 
         <tr>
-            <th>Продукт</th>
+            <th class="name-cell">Продукт</th>
             <th>Единица измерения</th>
             <th>Количество</th>
             <th>Цена</th>
@@ -104,15 +103,20 @@
             <tr>
                 <td>{% if item.name %}{{ item.name }}{% endif %}</td>
                 <td>
-    {% if item.unit %}
-        {% if item.unit == 'item' %}шт{% endif %}
-        {% if item.unit == 'kilogram' %}кг{% endif %}
-        {% if item.unit == 'liter' %}литр{% endif %}
-    {% endif %}
-</td>
+                    {% if item.unit %}
+                        {% if item.unit == 'item' %}шт{% endif %}
+                        {% if item.unit == 'kilogram' %}кг{% endif %}
+                        {% if item.unit == 'liter' %}литр{% endif %}
+                    {% endif %}
+                </td>
                 <td>{% if item.quantity %}{{ item.quantity }}{% endif %}</td>
                 <td>{% if item.price %}{{ item.price }}{% endif %}</td>
-                <td>{% if item.state %}{{ item.state }}{% endif %}</td>
+                <td>
+                    {% if item.state %}
+                    {% if item.state == 'normal' %}Норма{% endif %}
+                    {% if item.state == 'defect' %}Брак{% endif %}
+                    {% endif %}
+                </td>
                 <td>{% if item.total_price %}{{ item.total_price }}{% endif %}</td>
 
             </tr>
@@ -126,6 +130,7 @@
     </tfoot>
 
 </table>
+</div>
 
 
 
@@ -138,15 +143,16 @@
 
     <div class="signatures">
         <div class="company-signature">
-            <p>Подпись представителя компании: <span class="underline"></span></p>
+            <p>Подпись представителя компании: __________________________</p>
         </div>
 
         <div class="distributor-signature">
-            <p>Подпись дистрибьютора: <span class="underline"></span></p>
+            <p>Подпись дистрибьютора: __________________________</p>
         </div>
     </div>
-<script>
-    document.getElementById("totalAmount").innerHTML = "{{ return_invoice_data.total_amount }}";
-</script>
+<!--<script>-->
+<!--    document.getElementById("totalAmount").innerHTML = "{{ return_invoice_data.total_amount }}";-->
+<!--</script>-->
+    </div>
 </body>
 </html>
