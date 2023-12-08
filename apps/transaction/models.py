@@ -125,6 +125,9 @@ class ReturnInvoiceItems(models.Model):
                 if not created:
                     defect_item.quantity += self.quantity
                     defect_item.save()
+                product_normal.state = choices.State.DEFECT
+                product_normal.save()
+
             else:
                 # Увеличиваем количество на основном складе
                 ProductNormal.objects.filter(

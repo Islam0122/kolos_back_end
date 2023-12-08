@@ -143,18 +143,9 @@ class ReturnInvoiceSerializer(serializers.ModelSerializer):
 
 
 class SearchSerSeles(serializers.Serializer):
-    name = serializers.SerializerMethodField()
-    category = serializers.SerializerMethodField()
+    name = serializers.CharField()
+    category = serializers.CharField()
 
-    class Meta:
-        model = InvoiceItems
-        fields = ['id', 'name', 'category']
-
-    def get_name(self, obj):
-        return obj.product.name
-
-    def get_category(self, obj):  # Добавляем метод для получения категории
-        return obj.product.category.title
 
 
 class ClueSearchSerializer(serializers.ModelSerializer):

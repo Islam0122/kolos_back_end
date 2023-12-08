@@ -79,23 +79,6 @@ class ArchivedListItems(serializers.ModelSerializer):
         fields = '__all__'
 
 
-class SearchDefectSerializer(serializers.ModelSerializer):
-    name = serializers.CharField(source='product.name')
-    category = serializers.CharField(source='product.category.title')
-
-
-    class Meta:
-        model = m.ProductDefect
-        fields = ['name', 'category']
-
-    def update(self, instance, validated_data):
-        product_data = validated_data.pop('product', {})
-        instance.product.name = product_data.get('name', instance.product.name)
-        # ... остальные обновления product
-        instance.product.save()
-
-        instance.quantity = validated_data.get('quantity', instance.quantity)
-        instance.warehouse = validated_data.get('warehouse', instance.warehouse)
-        instance.save()
-
-        return instance
+class SearchDefectSerializer(serializers.Serializer):
+    name = serializers.CharField()
+    category = serializers.CharField()

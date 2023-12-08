@@ -197,20 +197,19 @@ class SearchSold(generics.ListAPIView):
         if category_filter:
             queryset = queryset.filter(product__category__title__iexact=category_filter)
 
-        # Фильтрация по дате
-        start_date = self.request.query_params.get('start_date', None)
-        end_date = self.request.query_params.get('end_date', None)
 
-        if start_date and end_date:
-            # Если указаны обе даты, ищем в интервале между ними
-            queryset = queryset.filter(invoice__sale_date__range=[start_date, end_date])
+        # return queryset
+        print(queryset)
+        # Получаем уникальные имена и категории
+        unique_names_and_categories = queryset.values_list('product__name', 'product__category').distinct()
+        print(unique_names_and_categories)
 
-        elif end_date:
-            # Если указана только начальная дата, ищем по ней
-            queryset = queryset.filter(invoice__sale_date__lte=end_date)
-
-        return queryset
-
+        # Создаем список словарей с уникальными именами и категориями
+        result_data = [{'name': name, 'category': category} for name, category in unique_names_and_categories]
+        #
+        serializer = SearchSerSeles(result_data, many=True)
+        # breakpoint()
+        return serializer.data
 
 class SearchReturned(generics.ListAPIView):
     serializer_class = ClueSearchSerializer

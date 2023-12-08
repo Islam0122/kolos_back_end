@@ -12,6 +12,7 @@ from product.models import ProductNormal, ProductDefect, Warehouse
 from django.shortcuts import get_object_or_404
 from product.choices import State
 from rest_framework.views import APIView
+import pdb
 
 
 class MoveNormalToDefectiveAPIView(APIView):
@@ -233,13 +234,17 @@ class Search(APIView):
     search_fields = ['name']
 
     def get(self, request, format=None):
-        queryset = product_models.ProductNormal.objects.filter(is_archived=False)
+        queryset = product_models.ProductNormal.objects.filter(is_archived=False).select_related('category')
 
         search_query = request.query_params.get('search_query', None)
         if search_query:
             queryset = queryset.filter(
                 Q(name__iregex=fr'.*{search_query}.*')
             )
+
+        category_filter = self.request.query_params.get('category', None)
+        if category_filter:
+            queryset = queryset.filter(category__title__iexact=category_filter)
 
         # Получаем уникальные имена и категории
         unique_names_and_categories = queryset.values_list('name', 'category').distinct()
@@ -270,7 +275,18 @@ class SearchDefect(ModelViewSet):
         if category_filter:
             queryset = queryset.filter(product__category__title__iexact=category_filter)
 
-        return queryset
+        # return queryset
+        print(queryset)
+        # Получаем уникальные имена и категории
+        unique_names_and_categories = queryset.values_list('product__name', 'product__category').distinct()
+        print(unique_names_and_categories)
+
+        # Создаем список словарей с уникальными именами и категориями
+        result_data = [{'name': name, 'category': category} for name, category in unique_names_and_categories]
+
+        serializer = product_ser.SearchDefectSerializer(result_data, many=True)
+        # breakpoint()
+        return serializer.data
 
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()
