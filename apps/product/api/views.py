@@ -101,7 +101,7 @@ class ProductDefectItemViewSet(ModelViewSet):
     search_fields = ['product__name', 'product__identification_number']
 
     def get_queryset(self):
-        queryset = product_models.ProductDefect.objects.filter(is_archived=False).select_related('product__category').filter( quantity__gt=0)
+        queryset = product_models.ProductDefect.objects.select_related('product__category').filter(is_archived=False, quantity__gt=0).order_by('-id')
         # Фильтрация по комбинированным полям без учета регистра и акцентов (для PostgreSQL)
         search_query = self.request.query_params.get('search_query', None)
         if search_query:
@@ -139,7 +139,7 @@ class ProductItemViewSet(ModelViewSet):
     search_fields = ['name', 'identification_number']
 
     def get_queryset(self):
-        queryset = product_models.ProductNormal.objects.filter(is_archived=False, state='normal')
+        queryset = product_models.ProductNormal.objects.filter(is_archived=False, state='normal').order_by('-id')
         # Фильтрация по комбинированным полям без учета регистра и акцентов (для PostgreSQL)
         search_query = self.request.query_params.get('search_query', None)
         if search_query:
@@ -205,7 +205,6 @@ class ArchivedDefectProductView(ModelViewSet):
 
         return Response(status=status.HTTP_200_OK)
 
-
 class CombinedProductView(APIView):
     def get(self, request, *args, **kwargs):
         normal_products = ProductNormal.objects.filter(is_archived=True)
@@ -217,17 +216,6 @@ class CombinedProductView(APIView):
         combined_products = normal_serializer.data + defect_serializer.data
 
         return Response(combined_products)
-
-
-# class ArchivedProductView(APIView):
-#     def get(self, request, *args, **kwargs):
-#         filter = {
-#             'normal_archive': product_models.ProductNormal.objects.filter(is_archived=True),
-#             'defect_archive': product_models.ProductDefect.objects.filter(is_archived=True),
-#             }
-#         serializer = product_ser.ArchivedListItems(filter, many=True)
-#         return Response(serializer.data, status=status.HTTP_200_OK)
-
 
 class Search(APIView):
     filter_backends = [SearchFilter, DjangoFilterBackend]

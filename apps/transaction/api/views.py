@@ -92,7 +92,7 @@ class DistributorInvoiceItemsView(generics.ListAPIView):
 
         distributor = get_object_or_404(Distributor, id=distributor_id)
 
-        queryset = InvoiceItems.objects.filter(invoice__distributor=distributor, quantity__gt=0)
+        queryset = InvoiceItems.objects.filter(invoice__distributor=distributor, quantity__gt=0).order_by('-id')
 
         # Фильтрация по комбинированным полям без учета регистра и акцентов (для PostgreSQL)
         search_query = self.request.query_params.get('search_query', None)
@@ -142,7 +142,7 @@ class ReturnInvoiceListByDistributor(generics.ListAPIView):
     def get_queryset(self):
         distributor_id = self.kwargs.get('distributor_id')  # Или откуда у вас берется distributor_id
 
-        queryset = ReturnInvoiceItems.objects.filter(return_invoice__distributor__id=distributor_id)
+        queryset = ReturnInvoiceItems.objects.filter(return_invoice__distributor__id=distributor_id).order_by('-id')
 
 
         # Фильтрация по комбинированным полям без учета регистра и акцентов (для PostgreSQL)
