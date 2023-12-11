@@ -101,7 +101,7 @@ class ProductDefectItemViewSet(ModelViewSet):
     search_fields = ['product__name', 'product__identification_number']
 
     def get_queryset(self):
-        queryset = product_models.ProductDefect.objects.select_related('product__category').filter(is_archived=False, quantity__gt=0).order_by('-id')
+        queryset = product_models.ProductDefect.objects.select_related('product__category').filter(is_archived=False, quantity__gt=0)
         # Фильтрация по комбинированным полям без учета регистра и акцентов (для PostgreSQL)
         search_query = self.request.query_params.get('search_query', None)
         if search_query:

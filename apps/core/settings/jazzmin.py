@@ -7,7 +7,7 @@ JAZZMIN_SETTINGS = {
     "site_icon": '/static/logo-fanat.png',
     "welcome_sign": "Добро пожаловать в панель администратора Kolos Admin Panel!",
     "copyright": "Geeks Pro",
-    "search_model": "src.services",
+    # "search_model": "src.services",
     "user_avatar": '/static/logo-fanat.png',
     "topmenu_links": [
         {"name": "Главная", "url": "admin:index", "permissions": ["auth.view_user"]},
@@ -50,7 +50,7 @@ JAZZMIN_UI_TWEAKS = {
     "accent": "accent-primary",
     "navbar": "navbar-white navbar-light",
     "no_navbar_border": False,
-    "navbar_fixed": False,
+    "navbar_fixed": True,
     "layout_boxed": False,
     "footer_fixed": False,
     "sidebar_fixed": False,

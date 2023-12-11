@@ -60,7 +60,7 @@ class InvoiceItems(models.Model):
         return self.product.price * self.quantity
 
     def __str__(self):
-        return f"позиция: {self.product.name} "
+        return f"Прод-я позиция: -> {self.product.name} "
 
 
     class Meta:
@@ -151,7 +151,7 @@ class ReturnInvoiceItems(models.Model):
         return self.invoice_item.product.price * self.quantity
 
     def __str__(self):
-        return f"Возвращенная позиция: {self.invoice_item.product.name} "
+        return f"Возв-я позиция: -> {self.invoice_item.product.name} "
 
     class Meta:
         verbose_name = _('Возвращенная  позиция')
