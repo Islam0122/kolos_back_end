@@ -4,7 +4,7 @@ from . import models as m
 from common.mixins import ChangeHistoryMixin
 
 admin.site.register(m.Category)
-admin.site.register(m.Warehouse)
+# admin.site.register(m.Warehouse)
 
 
 @admin.register(m.ProductNormal)

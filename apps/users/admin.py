@@ -1,4 +1,5 @@
 from django.contrib import admin
+# from django.contrib.auth.models import Token
 from .models import CustomUser
 from django.contrib.auth.admin import UserAdmin
 from django.utils.translation import gettext_lazy as _
@@ -20,3 +21,7 @@ class UserAdmin(UserAdmin):
         (_('Пользователь'), {'fields': ('first_name', 'last_name')}),
         (_('Настройки пользователя'), {'fields': ('role', 'is_active')}),
     )
+
+    # def ready(self):
+    #     # Удалить регистрацию токенов из админки
+    #     admin.site.unregister(Token)

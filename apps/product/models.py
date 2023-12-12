@@ -4,6 +4,8 @@ from . import choices
 from common.models import BaseModel
 from django.utils import timezone
 from simple_history.models import HistoricalRecords
+from django.db.models.signals import post_migrate
+from django.dispatch import receiver
 
 
 
@@ -16,6 +18,13 @@ class Warehouse(models.Model):
     class Meta:
         verbose_name = _('Склад')
         verbose_name_plural = _('Склад')
+
+    @receiver(post_migrate)
+    def create_initial_warehouses(sender, **kwargs):
+        if sender.name == 'product':
+            # Создание двух складов
+            Warehouse.objects.get_or_create(id=1, name='normal')
+            Warehouse.objects.get_or_create(id=2, name='defect')
 
 
 class Category(models.Model):
