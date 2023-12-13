@@ -59,4 +59,3 @@ class RegistrationView(generics.CreateAPIView):
         password = request.data.get('password')
         CustomUser.objects.create_user(username=username, password=password)
         return Response({"message": "Пользователь успешно создан"}, status=status.HTTP_201_CREATED)
-
