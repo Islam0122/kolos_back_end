@@ -25,7 +25,3 @@ class UserAdmin(UserAdmin):
         (_('Пользователь'), {'fields': ('first_name', 'last_name')}),
         (_('Настройки пользователя'), {'fields': ('role', 'is_active')}),
     )
-
-    # def ready(self):
-    #     # Удалить регистрацию токенов из админки
-    #     admin.site.unregister(Token)
