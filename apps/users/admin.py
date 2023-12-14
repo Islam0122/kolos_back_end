@@ -1,8 +1,12 @@
 from django.contrib import admin
+from rest_framework.authtoken.models import TokenProxy
+
 from .models import CustomUser
 from django.contrib.auth.admin import UserAdmin
 from django.utils.translation import gettext_lazy as _
 
+
+admin.site.unregister(TokenProxy)
 
 @admin.register(CustomUser)
 class UserAdmin(UserAdmin):
